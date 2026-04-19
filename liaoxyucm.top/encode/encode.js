@@ -248,23 +248,6 @@ function cardUnshuffle(s) {
 }
 
 let bchoo = { //这名字乱起的哈哈
-	"jge": {
-		"en": jisgreen_encrypt,
-		"de": jisgreen_decrypt,
-		"is_hash": false
-	},
-	"jis2": {
-		"en": jis2_encrypt,
-		"de": jis2_decrypt,
-		"is_hash": false,
-		"custom_text": "此为纪青（陈青陌）在开发KotlinBox时自创的加密算法，请支持他\n庆幸的是，我还有JIS2加密实现的留档"
-	},
-	"lvqichong": {
-		"en": lvQiChongEncode,
-		"de": lvQiChongDecode,
-		"is_hash": false,
-		"custom_text": "吕齐冲是我们班的同学，而吕齐冲加解密是自创的Base16的变体"
-	},
 	"b64": {
 		"en": utf8ToBase64,
 		"de": base64ToUtf8,
@@ -300,6 +283,24 @@ let bchoo = { //这名字乱起的哈哈
 		"de": offsetDecrypt,
 		"is_hash": false
 	},
+	"jge": {
+		"en": jisgreen_encrypt,
+		"de": jisgreen_decrypt,
+		"is_hash": false,
+		"custom_text": "JGE, JisGreen Encryption 是2025年11月的项目，现已停更。\n该加密效果不理想，密文长度甚至比明文长度高出52~137倍\n变体JisSkyline是66~171倍"
+	},
+	"jis2": {
+		"en": jis2_encrypt,
+		"de": jis2_decrypt,
+		"is_hash": false,
+		"custom_text": "此为纪青（陈青陌）在开发KotlinBox时自创的加密算法，请支持他\n庆幸的是，我还有JIS2加密实现的留档"
+	},
+	"lvqichong": {
+		"en": lvQiChongEncode,
+		"de": lvQiChongDecode,
+		"is_hash": false,
+		"custom_text": "吕齐冲是我们班的同学，而吕齐冲加解密是自创的Base16的变体"
+	},
 	"reverse": {
 		"en": reverseStr,
 		"de": reverseStr,
@@ -322,7 +323,7 @@ function isAsyncFunction(fn) {
   return fn?.constructor?.name === 'AsyncFunction';
 }
 
-let setmethod = "jge";
+let setmethod = "base64";
 
 function method(mtd) {
 	setmethod = mtd;

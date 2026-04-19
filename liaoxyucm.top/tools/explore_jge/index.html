@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://newsite.liaoxyucm.top/style.css">
+		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+		<title>Explore | JGE | LiaoxyuCM</title>
+	</head>
+	<body>
+		<nav>
+			<a href="https://liaoxyucm.top">LiaoxyuCM</a>
+			<div class="pc">
+				<a href="https://github.com/LiaoxyuCM" target="_blank">GitHub</a>
+				<a href="https://liaoxyucm.top/friendlylinks">友链</a>
+			</div>
+		</nav>
+		<main>
+			<textarea class="input" placeholder="输入文本，然后查看使用JGE加密时密文翻的倍数"></textarea>
+			<p><span class="output">翻了52.00倍</span>，<a href="https://encode.liaoxyucm.top">回去</a></p>
+			<div class="slider-container">
+				<div class="slider-track"></div>
+			</div>
+		</main>
+		<style>
+		.slider-container {
+			position: relative;
+			height: 8px;
+			background: #e0e0e0;
+			border-radius: 4px;
+			margin: 10px 0;
+			user-select: none;
+			pointer-events: none;
+		}
+		.slider-track {
+			position: absolute;
+			left: 0;
+			top: 0;
+			height: 100%;
+			background: #2196f3;
+			border-radius: 4px;
+			width: 0%;
+			transition: width 0.2s ease;
+		}
+		</style>
+		<script>
+			const input = document.querySelector(".input");
+			const output = document.querySelector(".output");
+			const sliderTrack = document.querySelector(".slider-track");
+			const sliderThumb = document.querySelector(".slider-thumb");
+			input.addEventListener("input", () => {
+				let l = ""
+				let res = 0
+				for (let i of input.value){
+					l += i.charCodeAt(0).toString(2) + " "
+				}
+				for (let chr of l) {
+					switch(chr) {
+						case "0": res += 7; break;
+						case "1": res += 8; break;
+						case " ": res += 9; break;
+					}
+				}
+				let value = 0;
+				if(input.value.length) {
+					value = res / input.value.length;
+				} else {
+					value = 0;
+				}
+				const min = 52;
+				const max = 137;
+				value = Math.max(min, Math.min(max, value));
+				const percent = ((value - min) / (max - min)) * 100;
+				sliderTrack.style.width = percent + "%";
+
+				let r, g, b;
+				if (percent < 33) {
+					const p = percent / 33;
+					r = 0;
+					g = Math.round(255 * p);
+					b = 255;
+				} else if (percent < 66) {
+					const p = (percent - 33) / 33;
+					r = Math.round(255 * p);
+					g = 255;
+					b = Math.round(255 * (1 - p));
+				} else {
+					const p = (percent - 66) / 34;
+					r = 255;
+					g = Math.round(255 * (1 - p));
+					b = 0;
+				}
+				const color = `rgb(${r}, ${g}, ${b})`;
+
+				output.textContent = `翻了${value.toFixed(2)}倍`;
+				sliderTrack.style.backgroundColor = color;
+			})
+			</script>
+        <section class="footer">
+            <p>&copy; LiaoxyuCM × LcmTech 2024-2026</p>
+        </section>
+		
+	</body>
+</html>
