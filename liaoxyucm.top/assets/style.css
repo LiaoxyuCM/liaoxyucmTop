@@ -1,7 +1,7 @@
-@import url("https://fonts.googleapis.com/css?family=Quicksand&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Poppins&display=swap");
 
 * {
-	font-family: "Quicksand", sans-serif;
+	font-family: "Poppins", sans-serif;
 	color: #eee;
 	--fidoworld-i-font-color-dark: #88f;
 	--fidoworld-u-font-color-dark: #8f8;

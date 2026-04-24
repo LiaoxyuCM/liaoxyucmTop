@@ -45,7 +45,7 @@
 			.overlay {
 				height: 100vh;
 				width: 100%;
-				background-color: rgba(255, 255, 255, 0.6);
+				background-color: rgba(255, 255, 255, 0.4);
 				display: flex;
 				flex-direction: column;
 				justify-content: center;
@@ -53,7 +53,7 @@
 				position: relative;
 			}
 			.subtitle {
-				color: #444;
+				color: #333;
 				display: flex;
 				justify-content: center;
 			}
@@ -97,7 +97,11 @@
 		</div>
 		<div class="mainpare">
 			<main>
-				<p class="timerpare"><span class="timer">Jan 4, 2026, utc+8 22:25</span></p>
+				<form method="get" action="https://cn.bing.com/search" style="display: flex">
+					<input name="q" placeholder="在必应搜索" style="flex: 1;" />
+					<button type="submit">=&gt;</button>
+				</form>
+				<br>
 				<select id="filter-control-1">
 					<option value="@all">--过滤--</option>
 					<option value="red2gh">跳转到GitHub</option>
@@ -161,6 +165,14 @@
 							</p>
 						</div>
 					</a>
+					<a href="https://tools.liaoxyucm.top/unwasting" class="filter filter-program filter-thissite">
+						<div class="card">
+							<h3>Unwasting</h3>
+							<p class="description">
+								针对WasteLang <strong>professional</strong>，你可以根据输出结果反推出Waste源代码
+							</p>
+						</div>
+					</a>
 					<a href="https://tools.liaoxyucm.top/randompicker" class="filter filter-sitetool filter-thissite">
 						<div class="card">
 							<h3>随机数生成器</h3>
@@ -188,53 +200,7 @@
 					
 					</a>
 				</div>
-				<script>
-					console.log("打开F12控制台的吕Q*C****小朋友，恭喜你喜提彩蛋！\n加入辽逊科技！！");
-					const imgsection = document.querySelector(".p-img");
-					const startTime = new Date('2026/01/04 22:25:00').getTime();
-					const timer  = document.querySelector('.timer');
 
-
-
-					window.addEventListener('scroll', function() {
-						const nav = document.querySelector('nav');
-						if (window.scrollY < 11) {
-							nav.classList.add('unscrolled');
-						} else {
-							nav.classList.remove('unscrolled');
-						}
-					});
-					function fmtDuration(ms){
-						const day = Math.floor(ms/86400000);
-						const hour = Math.floor(ms%86400000/3600000);
-						const min = Math.floor(ms%3600000/60000);
-						const sec = Math.floor(ms%60000/1000);
-						return `${day}天 ${hour}时 ${min}分 ${sec}秒`;
-					}
-					function update(){timer.textContent = '本站已运行 ' + fmtDuration(Date.now() - startTime);}
-					setInterval(update, 100);
-
-					
-					const cards = document.querySelectorAll("a.filter");
-					const filter1 = document.querySelector("#filter-control-1");
-					const filter2 = document.querySelector("#filter-control-2");
-
-					function filterCards() {
-						const val1 = filter1.value;
-						const val2 = filter2.value;
-
-						cards.forEach(card => {
-							let match1 = val1 === "@all" || card.classList.contains(`filter-${val1}`);
-							let match2 = val2 === "@all" || card.classList.contains(`filter-${val2}`);
-							
-							card.style.display = (match1 && match2) ? "block" : "none";
-						});
-					}
-					filter1.addEventListener("change", filterCards);
-					filter2.addEventListener("change", filterCards);
-
-					filterCards();
-				</script>
 				<br>
 				<hint class="warn">?: 注意！这里指的是L<strong><u>c</u></strong>mTech 不是LamTech!</hint>
 				<p>如果你发现本网站跟你自己网站的设计相似或者雷同，纯属巧合，勿函谢谢</p>
@@ -242,7 +208,54 @@
 		</div>
 		<section class="footer">
 			<p onclick="this.textContent='Hello LǚQíChōng and SāDàn!'">&copy; LiaoxyuCM × LcmTech 2024-2026</p>
+			<p class="timer">Jan 4, 2026, utc+8 22:25</p>
 		</section>
-		
+		<script>
+				console.log("打开F12控制台的吕Q*C****小朋友，恭喜你喜提彩蛋！\n加入辽逊科技！！");
+				const imgsection = document.querySelector(".p-img");
+				const startTime = new Date('2026/01/04 22:25:00').getTime();
+				const timer  = document.querySelector('.timer');
+
+
+
+				window.addEventListener('scroll', function() {
+					const nav = document.querySelector('nav');
+					if (window.scrollY < 21) {
+						nav.classList.add('unscrolled');
+					} else {
+						nav.classList.remove('unscrolled');
+					}
+				});
+				function fmtDuration(ms){
+					const day = Math.floor(ms/86400000);
+					const hour = Math.floor(ms%86400000/3600000);
+					const min = Math.floor(ms%3600000/60000);
+					const sec = Math.floor(ms%60000/1000);
+					return `${day}天 ${hour}时 ${min}分 ${sec}秒`;
+				}
+				function update(){timer.textContent = '本站已经安全地活过 ' + fmtDuration(Date.now() - startTime);}
+				setInterval(update, 100);
+
+					
+				const cards = document.querySelectorAll("a.filter");
+				const filter1 = document.querySelector("#filter-control-1");
+				const filter2 = document.querySelector("#filter-control-2");
+
+				function filterCards() {
+					const val1 = filter1.value;
+					const val2 = filter2.value;
+
+					cards.forEach(card => {
+						let match1 = val1 === "@all" || card.classList.contains(`filter-${val1}`);
+						let match2 = val2 === "@all" || card.classList.contains(`filter-${val2}`);
+							
+						card.style.display = (match1 && match2) ? "block" : "none";
+					});
+				}
+				filter1.addEventListener("change", filterCards);
+				filter2.addEventListener("change", filterCards);
+
+				filterCards();
+		</script>
 	</body>
 </html>

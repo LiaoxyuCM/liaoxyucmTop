@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://newsite.liaoxyucm.top/style.css">
+		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+		<script src="/unwasting/module.js"></script>
+		<title>Unwasting | LiaoxyuCM</title>
+	</head>
+	<body>
+		<nav>
+			<a href="https://liaoxyucm.top">LiaoxyuCM</a>
+			<div class="pc">
+				<a href="https://github.com/LiaoxyuCM" target="_blank">GitHub</a>
+				<a href="https://liaoxyucm.top/friendlylinks">友链</a>
+			</div>
+		</nav>
+		<main>
+			<noscript>
+				<h3>本编码器几乎无法运作 因为你没打开JavaScript</h3>
+			</noscript>
+			<textarea placeholder="输入文本" class="input"></textarea>
+			<div class="buttongroup">
+				<button class="go">编译成wastelang</button>
+				<button class="copyrs">复制结果</button>
+			</div>
+			<textarea placeholder="结果将显示在这里" class="output" readonly></textarea>
+		</main>
+        <section class="footer">
+            <p>&copy; LiaoxyuCM × LcmTech 2024-2026</p>
+        </section>
+		<script>
+			let input = document.querySelector('.input');
+			let output = document.querySelector('.output');
+			let go = document.querySelector('.go');
+			go.addEventListener("click", () => {
+				console.log("doing")
+				output.value = unwaste_compile(input.value);
+			})
+
+			let copy_result = document.querySelector('.copyrs');
+			copy_result.addEventListener("click", async () => {
+				await navigator.clipboard.writeText(output.value);
+			})
+		</script>
+	</body>
+</html>
