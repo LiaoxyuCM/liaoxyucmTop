@@ -323,7 +323,7 @@ function isAsyncFunction(fn) {
   return fn?.constructor?.name === 'AsyncFunction';
 }
 
-let setmethod = "base64";
+let setmethod = "b64";
 
 function method(mtd) {
 	setmethod = mtd;
