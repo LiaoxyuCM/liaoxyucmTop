@@ -89,7 +89,7 @@
 		<div class="overlay">
 			<h1>Welcome</h1>
 			<p class="subtitle">
-				/* LiaoxyuCM, LcmTech<sup>?</sup> */
+				/* LiaoxyuCM, Lclimir */
 			</p>
 			<svg class="scroll-down-svg" viewBox="0 0 24 24">
 				<path d="M12 14.5l-5-5 1.4-1.4 3.6 3.6 3.6-3.6 1.4 1.4z"/>
@@ -122,8 +122,8 @@
 					</a>
 					<a href="https://about.liaoxyucm.top" class="filter filter-sitesupport filter-thissite">
 						<div class="card">
-							<h3>关于</h3>
-							<p class="description">关于LiaoxyuCM</p>
+							<h3>关于LiaoxyuCM</h3>
+							<p class="description">自我介绍</p>
 						</div>
 					</a>
 					<a href="https://starter.liaoxyucm.top" class="filter filter-program filter-thissite">
@@ -208,12 +208,11 @@
 				</div>
 
 				<br>
-				<hint class="warn">?: 注意！这里指的是L<strong><u>c</u></strong>mTech 不是LamTech!</hint>
-				<p>如果你发现本网站跟你自己网站的设计相似或者雷同，纯属巧合，勿函谢谢</p>
+				<p>如果你发现本网站跟你自己网站的设计相似或者雷同，纯属巧合<br>本站不会主动收集你的个人信息</p>
 			</main>
 		</div>
 		<section class="footer">
-			<p onclick="this.textContent='Hello LǚQíChōng and SāDàn!'">&copy; LiaoxyuCM × LcmTech 2024-2026</p>
+			<p onclick="this.textContent='Hi, Qichong Chlorine!'">&copy; LiaoxyuCM × LcmTech 2024-2026</p>
 			<p class="timer">Jan 4, 2026, utc+8 22:25</p>
 		</section>
 		<script>
@@ -221,8 +220,21 @@
 				const imgsection = document.querySelector(".p-img");
 				const startTime = new Date('2026/01/04 22:25:00').getTime();
 				const timer  = document.querySelector('.timer');
+            function getQueryParam(param) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(param);
+            }
 
-
+            const redirectFromValue = getQueryParam('redirectFrom');
+            if (redirectFromValue == 'liaoxyucm.xyz') {
+                const mainElement = document.querySelector('.mainpare main');
+                if (mainElement) {
+                    const warnDiv = document.createElement('div');
+                    warnDiv.className = 'hint warn';
+                    warnDiv.innerHTML = `检测到您正在通过 liaoxyucm.<strong>xyz</strong>&nbsp;跳转访问本站，请直接访问 liaoxyucm.<strong>TOP</strong>&nbsp;旧站将在2027/1/4起不再跳转到新站`;
+                    document.querySelector("main").insertBefore(warnDiv, document.querySelector("main").firstChild);
+                }
+            }
 
 				window.addEventListener('scroll', function() {
 					const nav = document.querySelector('nav');
