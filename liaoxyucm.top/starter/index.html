@@ -1,125 +1,123 @@
 <!DOCTYPE html>
 <html lang="zh-cn">
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<title>Starter | LiaoxyuCM</title>
-		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
-	</head>
-	<body>
-		<style>
-			@import url("https://fonts.loli.net/css?family=Poppins&display=swap");
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Starter-v3 | LiaoxyuCM</title>
+	<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+	<script src="jquery.min.js"></script>
+</head>
+<body>
+	<style>
+		@import url("https://fonts.loli.net/css?family=Poppins&display=swap");
+		* {
+			font-family: "Poppins", sans-serif;
+			color: #eee;
+		}
 
-			* {
-				font-family: "Poppins", sans-serif;
-				color: #eee;
-			}
-			body {
-				background-color: #121212;
-				-ms-overflow-style: none;
-			}
-			main {
-				display: flex;
-				position: absolute;
-				top: 50%;
-				left: 50%;
-				transform: translate(-50%, -50%);
-				flex-direction: column;
-				align-items: center;
-			}
-			body::-webkit-scrollbar {
-				display: none;
-			}
+		body {
+			background-color: #121212;
+			-ms-overflow-style: none;
+		}
+		body::-webkit-scrollbar {
+			display: none;
+		}
+		main {
+			display: flex;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			flex-direction: column;
+			align-items: center;
+		}
 
-			.divition {
-				position: relative;
-				display: inline-block;
-			}
-			.eng-c {
-				position: relative;
-				outline: none!important;
-				border: none;
-				border-bottom: 2px solid #999;
-				padding: 5px;
-				width: 800px;
-				height: 25px;
-			    background-color: #121212;
-				transition: .3s all ease-in-out;
-			}
-			.eng-c::placeholder {
-				transition: .3s all ease-in-out;
-			}
-			.divition::before {
-				content: '';
-				position: absolute;
-				bottom: 0;
-				left: 0;
-				width: 100%;
-				height: 2px;
-				background-color: #fff;
-				transform: scaleX(0);
-				transform-origin: left;
-				transition: transform 0.3s ease-in-out;
-				z-index: 300;
-			}
-			.divition:focus-within::before {
-				transform: scaleX(1);
-			}
-			.eng-c:hover::placeholder,
-			.eng-c:focus::placeholder {
-				letter-spacing: 1.5px;
-			}
+		.divition {
+			position: relative;
+			display: inline-block;
+		}
+		.divition::before {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 2px;
+			background-color: #fff;
+			transform: scaleX(0);
+			transform-origin: left;
+			transition: transform 0.3s ease-in-out;
+			z-index: 300;
+		}
+		.divition:focus-within::before {
+			transform: scaleX(1);
+		}
 
-			@media (max-width:880px){ .eng-c {width: 500px} }
-			@media (max-width:550px){ .eng-c {width: 300px} }
-			@media (max-width:330px){ .eng-c {width: 200px} }
-			@media (max-width:220px){ .eng-c {width: 100px} }
-			@media (max-width:110px){ .eng-c {width: 50px } }
-		</style>
-		<main>
-			<div class="divition">
-				<input type="text" name="q" class="eng-c" autocomplete="off" placeholder="请将JavaScript打开，否则起始页不起任何作用"/>
-			</div>
-		</main>
-		<script>
-			const text = document.querySelector(".eng-c");
-			let baseText = '';
+		.eng-c {
+			outline: none!important;
+			border: none;
+			border-bottom: 2px solid #999;
+			padding: 5px;
+			width: 800px;
+			height: 25px;
+			background-color: #121212;
+			transition: .3s all ease-in-out;
+		}
+		.eng-c::placeholder {
+			transition: .3s all ease-in-out;
+		}
+		.eng-c:hover::placeholder,
+		.eng-c:focus::placeholder {
+			letter-spacing: 1.5px;
+		}
 
-			text.focus();
+		@media (max-width:880px){ .eng-c {width: 500px} }
+		@media (max-width:550px){ .eng-c {width: 300px} }
+		@media (max-width:330px){ .eng-c {width: 200px} }
+		@media (max-width:220px){ .eng-c {width: 100px} }
+		@media (max-width:110px){ .eng-c {width:  50px} }
+	</style>
+	<main>
+		<div class="divition">
+			<input type="text" name="q" class="eng-c" autocomplete="off" placeholder="请打开JavaScript，否则起始页没有任何作用"/>
+		</div>
+	</main>
+	<script>
+		// Focus input bar
+		const $text = $(".eng-c");
+		$text.focus();
 
-			let hitokoto = '';
-			let rawHitokoto = '';
+		// Get hitokoto
+		let hitokoto = '';
+		let rawHitokoto = '';
+		$.get("https://v1.hitokoto.cn/").done((data) => {
+			rawHitokoto = data.hitokoto;
+			hitokoto = ' - ' + rawHitokoto;
+		}).fail((e) => {});
 
-			fetch("https://v1.hitokoto.cn/").then((resp) => resp.json()).then((data) => {
-				rawHitokoto = data.hitokoto;
-				hitokoto = ' - ' + rawHitokoto;
-			}).catch((e) => {});
+		// Setup placeholder
+		const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+		const now = new Date();
+		const pad = x => String(x).padStart(2,'0');
+		let baseText = '';
+		let subText = '';
+		function updateClock(){
+			now.setTime(Date.now());
+			baseText = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+			subText = `, ${month[now.getMonth()]} ${pad(now.getDate())}, ${now.getFullYear()}`;
+			$text.attr("placeholder", baseText + ($(window).width() > 220 ? subText : "") + ($(window).width() > 550 ? hitokoto : ""));
+			requestAnimationFrame(updateClock);
+		}
+		updateClock();
 
-			const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-			const now = new Date();
-			const pad = x => String(x).padStart(2,'0');
-			function updateClock(){
-				now.setTime(Date.now());
-				baseText = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
-				subText = `, ${String(month[now.getMonth()])} ${pad(now.getDate())}, ${now.getFullYear()}`;
-				text.placeholder = baseText + (window.innerWidth > 220 ? subText : "") + (window.innerWidth > 550 ? hitokoto : "");
-				requestAnimationFrame(updateClock);
-			};
-			updateClock();
-
-			function escapeHtml(str){
-				return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-			};
-			function dosearch(){
-				let query = encodeURIComponent(text.value.trim()) || (window.innerWidth > 550 ? encodeURIComponent(rawHitokoto) : "");
-				let redirectLink = `https://bing.com/?q=${query}`;
-				window.open(redirectLink, "_blank");
-			};
-			text.addEventListener('keydown', function(event) {
-				if (event.key === 'Enter' || event.keyCode === 13) {
-					dosearch();
-				};
-			});
-		</script>
-	</body>
+		// Handle search
+		$text.on('keydown', (event) => {
+			if (event.key === 'Enter' || event.keyCode === 13) {
+				let query = encodeURIComponent($text.val().trim()) || ($(window).width() > 550 ? encodeURIComponent(rawHitokoto) : "");
+				window.open(`https://bing.com/?q=${query}`, "_blank");
+				$text.val("");
+			}
+		});
+	</script>
+</body>
 </html>
