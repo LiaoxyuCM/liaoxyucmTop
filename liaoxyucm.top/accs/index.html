@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+	<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+    <title>账户中心 | LiaoxyuCM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f0f2f5;
+            color: #1f2d3d;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 卡片通用样式 */
+        .card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        .card-header {
+            padding: 18px 24px;
+            background: #fefefe;
+            border-bottom: 1px solid #edf2f7;
+            font-weight: 600;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* 表单组 */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 6px;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #d0d7de;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #2c6e9e;
+            box-shadow: 0 0 0 3px rgba(44, 110, 158, 0.1);
+        }
+
+        button {
+            background: #2c6e9e;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #1f547c;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .btn-outline {
+            background: white;
+            color: #2c6e9e;
+            border: 1px solid #2c6e9e;
+        }
+
+        .btn-outline:hover {
+            background: #eef6fc;
+        }
+
+        .danger-btn {
+            background: #dc3545;
+        }
+        .danger-btn:hover {
+            background: #bb2d3b;
+        }
+
+        /* 用户信息展示区 */
+        .profile-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f2f6;
+        }
+        .profile-label {
+            font-weight: 500;
+            color: #5a687a;
+            width: 90px;
+        }
+        .profile-value {
+            flex: 1;
+            color: #1f2d3d;
+        }
+        .points-badge {
+            background: #fff5eb;
+            padding: 4px 12px;
+            border-radius: 40px;
+            color: #e68a2e;
+            font-weight: 600;
+        }
+        .level-badge {
+            background: #ecf5ff;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
+        .message-bar {
+            background: #e9f7ef;
+            border-left: 4px solid #2ecc71;
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        .error-bar {
+            background: #fee9e6;
+            border-left-color: #e67e22;
+            color: #c0392b;
+        }
+
+        .grid-2col {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .grid-2col > * {
+            flex: 1;
+        }
+
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #edf2f7;
+        }
+
+        @media (max-width: 640px) {
+            body { padding: 16px; }
+            .profile-row { flex-direction: column; align-items: flex-start; gap: 4px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <!-- 登录卡片 -->
+    <div class="card" id="loginCard">
+        <div class="card-header">登录账户</div>
+        <div class="card-body">
+            <div id="loginMessage"></div>
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="loginUsername" placeholder="字母/数字/下划线，最多25位" autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="loginPassword" placeholder="请输入密码">
+            </div>
+            <button id="loginBtn">登录 / 进入系统</button>
+            <button id="registerBtn">注册</button>
+        </div>
+    </div>
+
+    <!-- 用户面板：登录后显示 -->
+    <div id="userPanel" style="display: none;">
+        <!-- 用户信息卡片 -->
+        <div class="card">
+            <div class="card-header">我的档案</div>
+            <div class="card-body">
+                <div id="userInfoArea"></div>
+            </div>
+        </div>
+
+        <!-- 操作区: 签到/修改签名/修改用户名/转账 -->
+        <div class="card">
+            <div class="card-header">账户操作</div>
+            <div class="card-body">
+                <div id="actionMessage"></div>
+                
+                <!-- 签到 -->
+                <div class="form-group">
+                    <button id="checkinBtn" style="background:#27ae60;">每日签到 (+5~20积分)</button>
+                </div>
+                
+                <hr>
+                
+                <!-- 修改签名 -->
+                <div class="form-group">
+                    <label>修改个性签名</label>
+                    <textarea id="newSign" rows="2" placeholder="写下你的新签名..." maxlength="100"></textarea>
+                    <button id="changeSignBtn" style="margin-top: 8px;">更新签名</button>
+                </div>
+                
+                <hr>
+                
+                <!-- 修改用户名 (消耗积分) -->
+                <div class="form-group">
+                    <label>修改用户名(登陆时要用到) <span style="color:#e67e22;">(消耗 10 积分)</span></label>
+                    <input type="text" id="newUsername" placeholder="新用户名（字母数字下划线）" maxlength="25">
+                    <button id="changeUsernameBtn" style="margin-top: 8px;">修改用户名</button>
+                </div>
+                <!-- 修改昵称 -->
+                <div class="form-group">
+                    <label>修改昵称(你和别人能看到的名字)</label>
+                    <input type="text" id="newNickname" placeholder="新昵称（字母数字下划线）" maxlength="25">
+                    <button id="changeNicknameBtn" style="margin-top: 8px;">修改用户名</button>
+                </div>
+                <div class="form-group">
+                    <label>修改密码</label>
+                    <input type="text" id="newPassword" placeholder="新密码" maxlength="25">
+                    <button id="changePasswordBtn" style="margin-top: 8px;">修改密码</button>
+                </div>
+                
+                <hr>
+                
+                <!-- 积分转账 -->
+                <div class="form-group">
+                    <label>转账</label>
+                    <div class="grid-2col">
+                        <input type="text" id="targetUser" placeholder="目标用户名">
+                        <input type="number" id="transferPoints" placeholder="积分数量" min="1">
+                    </div>
+                    <button id="transferBtn" style="margin-top: 8px;">转出积分</button>
+                </div>
+
+                <hr>
+				<p id="shareLink"></p>
+                <button id="logoutBtn" class="danger-btn" style="background:#6c757d;">退出登录</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- 全局变量 ----------
+    let currentUsername = null;      // 当前登录用户名
+    let currentUserData = null;      // 存储用户完整信息 { nickname, sign, privilege, points }
+    
+    // 辅助: 积分等级映射 (根据points展示等级)
+const levelConfig = [
+        { min: 0, max: 100, name: '青铜I' },
+        { min: 100, max: 300, name: '青铜II' },
+        { min: 300, max: 600, name: '青铜III' },
+        { min: 600, max: 1000, name: '青铜IV' },
+        { min: 1000, max: 1500, name: '青铜V' },
+        { min: 1500, max: 2100, name: '白银I' },
+        { min: 2100, max: 2800, name: '白银II' },
+        { min: 2800, max: 3600, name: '白银III' },
+        { min: 3600, max: 4500, name: '白银IV' },
+        { min: 4500, max: 5500, name: '白银V' },
+        { min: 5500, max: 6600, name: '黄金I' },
+        { min: 6600, max: 7800, name: '黄金II' },
+        { min: 7800, max: 9100, name: '黄金III' },
+        { min: 9100, max: 10500, name: '黄金IV' },
+        { min: 10500, max: 12000, name: '黄金V' },
+        { min: 12000, max: 13600, name: '铂金I' },
+        { min: 13600, max: 15300, name: '铂金II' },
+        { min: 15300, max: 17100, name: '铂金III' },
+        { min: 17100, max: 19000, name: '铂金IV' },
+        { min: 19000, max: 21000, name: '铂金V' },
+        { min: 21000, max: 23100, name: '钻石I' },
+        { min: 23100, max: 25300, name: '钻石II' },
+        { min: 25300, max: 27600, name: '钻石III' },
+        { min: 27600, max: 30000, name: '钻石IV' },
+        { min: 30000, max: 32500, name: '钻石V' },
+        { min: 32500, max: 35100, name: '星耀I' },
+        { min: 35100, max: 37800, name: '星耀II' },
+        { min: 37800, max: 40600, name: '星耀III' },
+        { min: 40600, max: 43500, name: '星耀IV' },
+        { min: 43500, max: 46500, name: '星耀V' },
+        { min: 46500, max: 49600, name: '王者I' },
+        { min: 49600, max: 52800, name: '王者II' },
+        { min: 52800, max: 56100, name: '王者III' },
+        { min: 56100, max: 59500, name: '王者IV' },
+        { min: 59500, max: 63000, name: '王者V' },
+        { min: 63000, max: 66600, name: '至尊王者I' },
+        { min: 66600, max: 70300, name: '至尊王者II' },
+        { min: 70300, max: 74100, name: '至尊王者III' },
+        { min: 74100, max: 78000, name: '至尊王者IV' },
+        { min: 78000, max: 82000, name: '至尊王者V' },
+        { min: 82000, max: 86100, name: '超级王者I' },
+        { min: 86100, max: 90300, name: '超级王者II' },
+        { min: 90300, max: 94600, name: '超级王者III' },
+        { min: 94600, max: 99000, name: '超级王者IV' },
+        { min: 99000, max: Infinity, name: '超级王者V' },
+    ];
+
+// ==============================================
+// 重点：完全重写的函数，只读取 levelConfig 数据
+// ==============================================
+function getLevelByPoints(points) {
+    // 把输入转成数字
+    const score = Number(points) || 0;
+    
+    // 遍历配置表，找到当前分数所在的段位
+    for (const item of levelConfig) {
+        if (score >= item.min && score < item.max) {
+            return item.name;
+        }
+    }
+
+    // 兜底：找不到就返回最低段位
+    return '青铜I';
+}
+    
+    // 渲染用户信息卡片 (积分 + 等级 + 签名 + 昵称)
+    function renderUserInfo(data) {
+        if (!data) return '<div>无法获取用户信息</div>';
+        const points = data.points ?? 0;
+        const level = getLevelByPoints(points);
+        const nickname = data.nickname ?? currentUsername;
+        const sign = data.sign ?? '暂无签名';
+        const privilege = Array.isArray(data.privilege) ? data.privilege : [];
+		document.querySelector("#shareLink").textContent = "分享链接：https://accs.liaoxyucm.top/detail.html?user=" + encodeURIComponent(currentUsername);
+        
+        return `
+            <div class="profile-row">
+                <div class="profile-label">昵称</div>
+                <div class="profile-value"><strong>${escapeHtml(nickname)}</strong></div>
+            </div>
+            <div class="profile-row">
+                <div class="profile-label">个性签名</div>
+                <div class="profile-value" style="color:#6c7a89;">${escapeHtml(sign)}</div>
+            </div>
+            <div class="profile-row">
+                <div class="profile-label">积分余额</div>
+                <div class="profile-value">
+                    <span class="points-badge">${points} 积分</span>
+                    <span class="level-badge">🏆 ${level}</span>
+                </div>
+            </div>
+            <div class="profile-row">
+                <div class="profile-label">权限标识</div>
+                <div class="profile-value">${privilege.map(p => `<span style="background:#eef2ff; padding:2px 10px;border-radius:30px;margin-right:6px;">${escapeHtml(p)}</span>`).join('') || '无'}</div>
+            </div>
+        `;
+    }
+    
+    // 显示通用消息
+    function showMessage(elementId, text, isError = false) {
+        const el = document.getElementById(elementId);
+        if (el) {
+            el.innerHTML = `<div class="message-bar ${isError ? 'error-bar' : ''}">${escapeHtml(text)}</div>`;
+            setTimeout(() => {
+                if (el.innerHTML.includes(text)) el.innerHTML = '';
+            }, 4000);
+        }
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    // 核心请求函数: 统一调用后端 action
+    async function callAction(action, extraParams = {}) {
+        if (!currentUsername) {
+            showMessage('actionMessage', '请先登录', true);
+            return null;
+        }
+        const formData = new URLSearchParams();
+        formData.append('username', currentUsername);
+        // 注意：后端需要密码验证（修改用户名等敏感操作可能需要密码，为了安全，我们在修改用户名时单独让用户输入密码）
+        // 但是后端登录后存储在 session？此接口为无状态接口，每次都需要密码？参照后端需要 $_POST["password"]
+        // 因此为了支持 action，每个请求都需要带上密码。我们在登录时缓存密码（不推荐生产，但demo方便）
+        if (window.cachedPassword) {
+            formData.append('password', window.cachedPassword);
+        } else {
+            // 如果没密码，尝试弹窗获取
+            const pwd = prompt('为了安全，请输入您的密码以继续操作：');
+            if (!pwd) return null;
+            window.cachedPassword = pwd;
+            formData.append('password', pwd);
+        }
+        
+        formData.append('action', action);
+        for (let [k, v] of Object.entries(extraParams)) {
+            formData.append(k, v);
+        }
+        
+        try {
+            const response = await fetch('https://api.liaoxyucm.top/accounts/doaction.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            });
+            const result = await response.json();
+            if (result.status === 0) {
+                // 操作成功, 刷新用户详情
+                await refreshUserDetail();
+                showMessage('actionMessage', result.message || '操作成功！', false);
+                return result;
+            } else {
+                showMessage('actionMessage', result.message || '操作失败', true);
+                return null;
+            }
+        } catch (err) {
+            console.error(err);
+            showMessage('actionMessage', '网络错误，请稍后重试', true);
+            return null;
+        }
+    }
+    
+    // 刷新当前用户详细信息 (调用getdetail接口)
+    async function refreshUserDetail() {
+        if (!currentUsername) return;
+        try {
+            const url = `https://api.liaoxyucm.top/accounts/getdetail.php?username=${encodeURIComponent(currentUsername)}`;
+            const resp = await fetch(url);
+			// console.log(resp.text())
+            const data = await resp.json();
+            if (data.status === 0 && data.data) {
+                currentUserData = data.data;
+                const infoHtml = renderUserInfo(currentUserData);
+                document.getElementById('userInfoArea').innerHTML = infoHtml;
+            } else {
+                document.getElementById('userInfoArea').innerHTML = '<div>加载信息失败</div>';
+            }
+			document.querySelector("#shareLink").textContent = "分享链接：https://accs.liaoxyucm.top/detail.html?user=" + encodeURIComponent(currentUsername);
+        } catch(e) {
+            console.warn(e);
+            document.getElementById('userInfoArea').innerHTML = '<div>刷新用户信息失败</div>';
+        }
+    }
+    
+    // 登录逻辑
+    async function login(username, password) {
+        const formData = new URLSearchParams();
+        formData.append('username', username);
+        formData.append('password', password);
+        formData.append('action', 'verify');
+        try {
+            const response = await fetch('https://api.liaoxyucm.top/accounts/doaction.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            });
+            const result = await response.json();
+            if (result.status === 0) {
+                currentUsername = username;
+                window.cachedPassword = password;
+                currentUserData = result.data;
+                // 显示用户面板
+                document.getElementById('loginCard').style.display = 'none';
+                document.getElementById('userPanel').style.display = 'block';
+                // 渲染信息
+                const infoHtml = renderUserInfo(currentUserData);
+                document.getElementById('userInfoArea').innerHTML = infoHtml;
+                showMessage('actionMessage', '登录成功！欢迎回来', false);
+                return true;
+            } else {
+                showMessage('loginMessage', result.message || '用户名或密码错误', true);
+                return false;
+            }
+        } catch(err) {
+            showMessage('loginMessage', '服务器连接失败 或 用户名或密码错误', true);
+            return false;
+        }
+    }
+
+	
+    async function register(username, password) {
+        const formData = new URLSearchParams();
+        formData.append('username', username);
+        formData.append('password', password);
+        try {
+            const response = await fetch('https://api.liaoxyucm.top/accounts/register.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            });
+            const result = await response.json();
+            if (result.status === 0) {
+                currentUsername = username;
+                window.cachedPassword = password;
+                currentUserData = result.data;
+                showMessage('loginMessage', '注册成功，请登录！', false);
+                return true;
+            } else {
+                showMessage('loginMessage', result.message || '用户名或密码错误', true);
+                return false;
+            }
+        } catch(err) {
+            showMessage('loginMessage', '服务器连接失败 或 用户名或密码错误', true);
+            return false;
+        }
+    }
+    
+    function logout() {
+        currentUsername = null;
+        currentUserData = null;
+        window.cachedPassword = null;
+        document.getElementById('loginCard').style.display = 'block';
+        document.getElementById('userPanel').style.display = 'none';
+        document.getElementById('loginUsername').value = '';
+        document.getElementById('loginPassword').value = '';
+        document.getElementById('actionMessage').innerHTML = '';
+    }
+    
+    // ---------- 事件绑定 ----------
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+        const user = document.getElementById('loginUsername').value.trim();
+        const pwd = document.getElementById('loginPassword').value;
+        if (!user || !pwd) {
+            showMessage('loginMessage', '请填写完整用户名和密码', true);
+            return;
+        }
+        await login(user, pwd);
+    });
+    
+    document.getElementById('registerBtn').addEventListener('click', async () => {
+        const user = document.getElementById('loginUsername').value.trim();
+        const pwd = document.getElementById('loginPassword').value;
+        if (!user || !pwd) {
+            showMessage('loginMessage', '请填写完整用户名和密码', true);
+            return;
+        }
+        await register(user, pwd);
+    });
+    
+    // 签到
+    document.getElementById('checkinBtn')?.addEventListener('click', async () => {
+        await callAction('check_in');
+    });
+    
+    // 修改签名
+    document.getElementById('changeSignBtn')?.addEventListener('click', async () => {
+        const newSign = document.getElementById('newSign').value.trim();
+        if (!newSign) {
+            showMessage('actionMessage', '签名内容不能为空', true);
+            return;
+        }
+        const res = await callAction('change_sign', { sign: newSign });
+        if (res && res.status === 0) {
+            document.getElementById('newSign').value = '';
+            showMessage('actionMessage', '签名更新成功', false);
+        }
+    });
+    
+    // 修改用户名（消耗积分）
+    document.getElementById('changeUsernameBtn')?.addEventListener('click', async () => {
+        const newUsername = document.getElementById('newUsername').value.trim();
+        if (!newUsername || !/^[a-zA-Z0-9_]+$/.test(newUsername) || newUsername.length > 25) {
+            showMessage('actionMessage', '用户名必须为字母数字下划线且长度≤25', true);
+            return;
+        }
+        // 二次确认
+        if (!confirm(`修改用户名将消耗10积分，确认修改为“${newUsername}”吗？（其实还不如直接改昵称）`)) return;
+        const res = await callAction('change_username', { new_username: newUsername });
+        if (res && res.status === 0) {
+            // 修改成功后, 当前用户名变更, 刷新全局
+            currentUsername = newUsername;
+            await refreshUserDetail();
+            document.getElementById('newUsername').value = '';
+            showMessage('actionMessage', `用户名已更新为 ${newUsername}`, false);
+        }
+		currentUsername = newUsername;
+    });
+    document.getElementById('changeNicknameBtn')?.addEventListener('click', async () => {
+        const newNickname = document.getElementById('newNickname').value.trim();
+        if (!newNickname || !/^[a-zA-Z0-9_]+$/.test(newNickname) || newNickname.length > 25) {
+            showMessage('actionMessage', '昵称必须为字母数字下划线且长度≤25', true);
+            return;
+        }
+        // 二次确认
+        const res = await callAction('change_nickname', { nickname: newNickname });
+        if (res && res.status === 0) {
+            // 修改成功后, 当前用户名变更, 刷新全局
+            currentNickname = newNickname;
+            await refreshUserDetail();
+            document.getElementById('newNickname').value = '';
+            showMessage('actionMessage', `用户名已更新为 ${newNickname}`, false);
+        }
+    });
+    
+    document.getElementById('changePasswordBtn')?.addEventListener('click', async () => {
+        const newPwd = document.getElementById('newPassword').value.trim();
+		const confirmPwd = prompt("确认密码");
+        // 二次确认
+        const res = await callAction('change_password', { new_password: newPwd, confirm_password: confirmPwd });
+        if (res) {
+            showMessage('actionMessage', res.message, !res.status);
+        }
+    });
+    // 积分转账
+    document.getElementById('transferBtn')?.addEventListener('click', async () => {
+        const targetUser = document.getElementById('targetUser').value.trim();
+        const points = parseInt(document.getElementById('transferPoints').value);
+        if (!targetUser) {
+            showMessage('actionMessage', '目标用户名不能为空', true);
+            return;
+        }
+        if (isNaN(points) || points <= 0) {
+            showMessage('actionMessage', '积分数量必须是正整数', true);
+            return;
+        }
+        if (!confirm(`确认向 ${targetUser} 转账 ${points} 积分吗？`)) return;
+        const res = await callAction('transfer_points', { target_user: targetUser, points: points });
+        if (res && res.status === 0) {
+            document.getElementById('targetUser').value = '';
+            document.getElementById('transferPoints').value = '';
+            showMessage('actionMessage', `转账成功，已转出 ${points} 积分`, false);
+        }
+    });
+    
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+        logout();
+    });
+    
+    // 初始化检查URL参数? 若已登录不清除localstorage, 演示简单
+    if (document.getElementById('loginCard')) {
+        // 确保初始状态
+    }
+</script>
+</body>
+</html>

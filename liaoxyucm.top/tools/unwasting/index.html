@@ -5,7 +5,6 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://newsite.liaoxyucm.top/style.css">
 		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
-		<script src="/unwasting/module.js"></script>
 		<title>Unwasting | LiaoxyuCM</title>
 	</head>
 	<body>
@@ -21,25 +20,34 @@
 				<h3>本编码器几乎无法运作 因为你没打开JavaScript</h3>
 			</noscript>
 			<textarea placeholder="输入文本" class="input"></textarea>
+			<label for="uniquers">
+				<p>
+					<input type="checkbox" id="uniquers" checked />
+					自动初始化
+				</p>
+			</label>
 			<div class="buttongroup">
 				<button class="go">编译成wastelang</button>
 				<button class="copyrs">复制结果</button>
 			</div>
 			<textarea placeholder="结果将显示在这里" class="output" readonly></textarea>
+			<!--<p>还不知道WasteLanguage是什么？<a href="https://github.com/ChenQingMua/WasteLanguage-Professional" target="_blank">在这里了解详情</a></p>-->
 		</main>
-        <section class="footer">
-            <p>&copy; LiaoxyuCM × LcmTech 2024-2026</p>
-        </section>
-		<script>
-			let input = document.querySelector('.input');
-			let output = document.querySelector('.output');
-			let go = document.querySelector('.go');
+		<section class="footer">
+			<p>&copy; LiaoxyuCM × FrontMeteor 2024-2026</p>
+		</section>
+		<script type="module">
+			import unwaste_compile from "/unwasting/module.js";
+
+			const input = document.querySelector('.input');
+			const output = document.querySelector('.output');
+			const uniquers = document.querySelector('#uniquers');
+			const go = document.querySelector('.go');
 			go.addEventListener("click", () => {
-				console.log("doing")
-				output.value = unwaste_compile(input.value);
+				output.value = unwaste_compile(input.value, uniquers.checked);
 			})
 
-			let copy_result = document.querySelector('.copyrs');
+			const copy_result = document.querySelector('.copyrs');
 			copy_result.addEventListener("click", async () => {
 				await navigator.clipboard.writeText(output.value);
 			})

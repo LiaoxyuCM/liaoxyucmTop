@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+	<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+    <title>Browser Kernel Check | LiaoxyuCM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: rgba(255, 255, 255, 0.97);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Roboto', 'Inter', system-ui, -apple-system, 'BlinkMacSystemFont', 'Helvetica Neue', sans-serif;
+            padding: 1.5rem;
+        }
+
+        /* 主卡片容器 */
+        .detector-card {
+            max-width: 880px;
+            width: 100%;
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* 检测结果区域 */
+        .result-area {
+            padding: 2rem 2rem 1.5rem 2rem;
+        }
+
+        .status-panel {
+            background: #f8fafc;
+            border-radius: 1.8rem;
+            padding: 1.2rem 1.6rem;
+            margin-bottom: 1.5rem;
+            box-shadow: inset 0 1px 2px #00000008, 0 4px 10px rgba(0,0,0,0.02);
+            border: 1px solid #e9edf2;
+        }
+
+
+        .verdict {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 12px 0 6px 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .pass {
+            color: #0f7b3a;
+        }
+        .fail {
+            color: #bc3f2e;
+        }
+        .warn {
+            color: #c97e0a;
+        }
+
+        .details {
+            margin-top: 14px;
+            background: #ffffff;
+            border-radius: 1.2rem;
+            padding: 0.9rem 1.2rem;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            border: 1px solid #e2e8f0;
+            color: #1e2a3e;
+        }
+
+        .details p {
+            margin: 6px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: baseline;
+        }
+
+        .details strong {
+            min-width: 100px;
+            font-weight: 600;
+            color: #0f3b4f;
+        }
+
+        .criteria {
+            background: #ecfdf5;
+            padding: 0.9rem 1.2rem;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .criteria p {
+            margin: 4px 0;
+        }
+
+        .kernel-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.8rem;
+            justify-content: flex-start;
+        }
+
+        .kernel-item {
+            background: white;
+            border-radius: 1.2rem;
+            padding: 0.6rem 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            flex: 1 1 180px;
+            border: 1px solid #dee4ec;
+        }
+
+        .kernel-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+        .kernel-ver {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #2c6e9e;
+        }
+
+
+        button {
+            background: none;
+            border: none;
+        }
+
+        .refresh-btn {
+            background: #eef2ff;
+            border: none;
+            padding: 0.4rem 1rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: #1e4a76;
+            cursor: pointer;
+            transition: 0.1s;
+            margin-top: 6px;
+        }
+
+        .refresh-btn:hover {
+            background: #dfe7f5;
+        }
+
+        @media (max-width: 600px) {
+            .detector-card {
+                border-radius: 1.5rem;
+            }
+            .verdict {
+                font-size: 1.2rem;
+            }
+            .details p {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="detector-card">
+    <div class="result-area" id="resultRoot">
+        <!-- 动态内容由js渲染 -->
+        <div style="text-align:center; padding: 2rem;">正在分析用户代理与内核版本...</div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        function detectKernelAndVersion() {
+            const ua = navigator.userAgent;
+            const lowerUA = ua.toLowerCase();
+
+            let chromeMatch = ua.match(/Chrome\/(\d+)/);
+            let chromiumMatch = ua.match(/Chromium\/(\d+)/);
+            let edgeMatch = ua.match(/Edg\/(\d+)/);
+            let operaMatch = ua.match(/OPR\/(\d+)/);
+            
+            if (chromeMatch || chromiumMatch || edgeMatch || operaMatch) {
+                let version = 0;
+                let versionStr = '';
+                if (chromeMatch) {
+                    version = parseInt(chromeMatch[1], 10);
+                    versionStr = chromeMatch[1];
+                } else if (chromiumMatch) {
+                    version = parseInt(chromiumMatch[1], 10);
+                    versionStr = chromiumMatch[1];
+                } else if (edgeMatch) {
+                    version = parseInt(edgeMatch[1], 10);
+                    versionStr = edgeMatch[1];
+                } else if (operaMatch) {
+                    version = parseInt(operaMatch[1], 10);
+                    versionStr = operaMatch[1];
+                }
+                let browserName = 'Chromium 内核浏览器';
+                if (ua.includes('Edg/')) browserName = 'Microsoft Edge (Chromium)';
+                else if (ua.includes('OPR')) browserName = 'Opera (Chromium)';
+                else if (ua.includes('Chrome')) browserName = 'Google Chrome';
+                else if (ua.includes('Chromium')) browserName = 'Chromium';
+                else browserName = 'Chromium 兼容浏览器';
+                
+                return { kernel: 'chromium', version: version, rawVersionString: versionStr, browserName: browserName };
+            }
+            
+            let firefoxMatch = ua.match(/Firefox\/(\d+)/);
+            if (firefoxMatch) {
+                let version = parseInt(firefoxMatch[1], 10);
+                let versionStr = firefoxMatch[1];
+                return { kernel: 'gecko', version: version, rawVersionString: versionStr, browserName: 'Mozilla Firefox' };
+            }
+            if (lowerUA.includes('gecko') && !lowerUA.includes('webkit')) {
+                let geckoVerMatch = ua.match(/rv:(\d+)\./);
+                if (geckoVerMatch && geckoVerMatch[1]) {
+                    let version = parseInt(geckoVerMatch[1], 10);
+                    return { kernel: 'gecko', version: version, rawVersionString: geckoVerMatch[1], browserName: 'Gecko-based Browser' };
+                }
+            }
+            
+            let safariVersionMatch = ua.match(/Version\/(\d+)\./);
+            let isSafari = (ua.includes('Safari') && !ua.includes('Chrome') && !ua.includes('Edg') && !ua.includes('OPR'));
+            if (isSafari && safariVersionMatch) {
+                let version = parseInt(safariVersionMatch[1], 10);
+                return { kernel: 'webkit', version: version, rawVersionString: safariVersionMatch[1], browserName: 'Apple Safari' };
+            }
+            if ((ua.includes('AppleWebKit') && !ua.includes('Chrome') && !ua.includes('Firefox') && !ua.includes('Edg')) || 
+                (ua.includes('Safari') && !ua.includes('Chrome'))) {
+                let altSafariMatch = ua.match(/Version\/(\d+)(?:\.\d+)?/);
+                if (altSafariMatch) {
+                    let version = parseInt(altSafariMatch[1], 10);
+                    return { kernel: 'webkit', version: version, rawVersionString: altSafariMatch[1], browserName: 'Apple Safari (WebKit)' };
+                }
+                let iOSMatch = ua.match(/OS (\d+)_(\d+)/);
+                if (iOSMatch) {
+                    let majorVer = parseInt(iOSMatch[1], 10);
+                    let inferredSafariVersion = majorVer;
+                    return { kernel: 'webkit', version: inferredSafariVersion, rawVersionString: `${inferredSafariVersion} (iOS ${majorVer})`, browserName: 'WebKit (Safari/iOS)' };
+                }
+                return { kernel: 'webkit', version: 0, rawVersionString: 'unknown', browserName: 'WebKit Browser (版本未知)' };
+            }
+            
+            return { kernel: 'unknown', version: 0, rawVersionString: 'unknown', browserName: '未知内核浏览器' };
+        }
+        
+        function isCompatible(kernel, version, rawVersionStr, ua) {
+            if (kernel === 'chromium') {
+                return version >= 111;
+            }
+            if (kernel === 'gecko') {
+                return version >= 114;
+            }
+            if (kernel === 'webkit') {
+                let fullVersion = 0;
+                let minor = 0;
+                let safariFullMatch = ua.match(/Version\/(\d+)\.(\d+)/);
+                if (safariFullMatch) {
+                    let major = parseInt(safariFullMatch[1], 10);
+                    let minorVal = parseInt(safariFullMatch[2], 10);
+                    if (major > 16) return true;
+                    if (major === 16 && minorVal >= 4) return true;
+                    return false;
+                }
+                let iOSFull = ua.match(/OS (\d+)_(\d+)/);
+                if (iOSFull) {
+                    let majoriOS = parseInt(iOSFull[1], 10);
+                    let minoriOS = parseInt(iOSFull[2], 10);
+                    if (majoriOS > 16) return true;
+                    if (majoriOS === 16 && minoriOS >= 4) return true;
+                    return false;
+                }
+                if (version === 16 && rawVersionStr && rawVersionStr.includes('.')) {
+                    let parts = rawVersionStr.split('.');
+                    if (parts.length >= 2 && parseInt(parts[1],10) >= 4) return true;
+                }
+
+                if (version > 16) return true;
+                if (version === 16) {
+                    let minorCheck = false;
+                    if (rawVersionStr && typeof rawVersionStr === 'string') {
+                        let dotIndex = rawVersionStr.indexOf('.');
+                        if (dotIndex !== -1) {
+                            let minorPart = rawVersionStr.substring(dotIndex+1);
+                            let minorNum = parseFloat(minorPart);
+                            if (!isNaN(minorNum) && minorNum >= 4) minorCheck = true;
+                        }
+                    }
+                    if (minorCheck) return true;
+                    return false;
+                }
+                return false;
+            }
+            return false;
+        }
+        
+        function renderResult() {
+            const resultContainer = document.getElementById('resultRoot');
+            if (!resultContainer) return;
+            
+            const detection = detectKernelAndVersion();
+            const { kernel, version, rawVersionString, browserName } = detection;
+            const ua = navigator.userAgent;
+            const compatible = isCompatible(kernel, version, rawVersionString, ua);
+            
+            // 补充内核说明文本及优先级
+            let kernelDisplay = '';
+            let requiredVersionText = '';
+            if (kernel === 'chromium') {
+                kernelDisplay = 'Chromium (Blink)';
+                requiredVersionText = '≥ 111';
+            } else if (kernel === 'gecko') {
+                kernelDisplay = 'Gecko (Firefox)';
+                requiredVersionText = '≥ 114';
+            } else if (kernel === 'webkit') {
+                kernelDisplay = 'WebKit (Safari)';
+                requiredVersionText = '≥ 16.4';
+            } else {
+                kernelDisplay = '未知内核';
+                priorityLabel = '未识别内核';
+                requiredVersionText = '无法判断';
+            }
+            
+            const statusClass = compatible ? 'pass' : 'fail';
+            const statusText = compatible ? '兼容性达标' : '兼容性不达标 / 内核版本过低';
+            
+            let suggestionMsg = '';
+            let bg = "#ecfdf5";
+            if (!compatible) {
+                bg = "#fdecec";
+                if (kernel === 'chromium') suggestionMsg = `当前 Chromium 版本 ${version}，需要升级至 111 或更高版本 (推荐 Chrome/Edge 最新稳定版)`;
+                else if (kernel === 'gecko') suggestionMsg = `当前 Firefox 版本 ${version}，需要升级至 114 或更高版本。`;
+                else if (kernel === 'webkit') suggestionMsg = `当前 Safari/WebKit 版本 ${
+                    rawVersionString !== 'unknown' ? rawVersionString : version
+                }，请升级至 Safari 16.4 或更高版本 (macOS Ventura 13.3+ / iOS 16.4+)`;
+                else suggestionMsg = `未能识别浏览器内核，请使用现代浏览器: Chrome 111+, Edge 111+, Firefox 114+, Safari 16.4+`;
+            } else {
+                suggestionMsg = `您的浏览器完全满足llcm.top的性能与兼容性要求。`;
+            }
+
+            const html = `
+                <div class="status-panel">
+                    <div class="verdict ${statusClass}">
+                        <span>${statusText}</span>
+                    </div>
+                    <div class="details">
+                        <p><strong>浏览器名称</strong> ${escapeHtml(browserName)}</p>
+                        <p><strong>内核类型</strong> ${kernelDisplay}</p>
+                        <p><strong>内核版本</strong> ${version > 0 ? version : (rawVersionString !== 'unknown' ? rawVersionString : '无法获取完整版本')} ${rawVersionString && rawVersionString !== 'unknown' ? `(原始: ${rawVersionString})` : ''}</p>
+                        <p><strong>User Agent</strong> <span style="word-break: break-all; font-size: 0.75rem;">${escapeHtml(ua)}</span></p>
+                    </div>
+                    <div class="criteria" style="background-color: ${bg}">
+                        <p><strong>本项目推荐标准：</strong></p>
+                        <div class="kernel-list">
+                            <div class="kernel-item"><span class="kernel-name">Chromium</span><br><span class="kernel-ver">版本 ≥ 111</span> <span style="font-size:0.7rem;">(Chrome 111+, Edge 111+)</span></div>
+                            <div class="kernel-item"><span class="kernel-name">Gecko</span><br><span class="kernel-ver">版本 ≥ 114</span> <span style="font-size:0.7rem;">(Firefox 114+)</span></div>
+                            <div class="kernel-item"><span class="kernel-name">WebKit</span><br><span class="kernel-ver">版本 ≥ 16.4</span> <span style="font-size:0.7rem;">(Safari 16.4+)</span></div>
+                            <div class="kernel-item"><span class="kernel-name">Trident</span><br><span class="kernel-ver">想都别想</span> <span style="font-size:0.7rem;">(Never)</span></div>
+                        </div>
+                        <p style="margin-top: 12px;"><strong>检测建议：</strong> ${suggestionMsg}</p>
+                        ${!compatible && kernel === 'webkit' && version === 16 ? '<p style="color:#b45309; font-size:0.75rem;">检测到 Safari 16 主版本，需要确认是否为 16.4+ (次要版本≥4)，请升级至最新系统。</p>' : ''}
+                    </div>
+                </div>
+            `;
+            resultContainer.innerHTML = html;
+        }
+        
+        // 辅助安全转义
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+                return c;
+            });
+        }
+        
+        // 页面加载和刷新按钮
+        window.addEventListener('DOMContentLoaded', () => {
+            renderResult();
+        });
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="https://newsite.liaoxyucm.top/style.css">
+		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+		<title>Reacted Intro | LiaoxyuCM</title>
+	</head>
+	<body>
+		<nav>
+			<a href="https://liaoxyucm.top">LiaoxyuCM</a>
+			<div class="pc">
+				<a href="https://github.com/LiaoxyuCM" target="_blank">GitHub</a>
+				<a href="https://liaoxyucm.top/friendlylinks">友链</a>
+			</div>
+		</nav>
+		<main>
+            <p>llcm.top是本站用react重写后的成品，所以大体上和原来的没什么区别，但也增加了许多原来没有的新功能</p>
+            <p>但在访问之前，请最好<a href="https://check.llcm.top" class="noshowing">检查一下浏览器内核</a>看看是否满足要求</p>
+			<a href="https://llcm.top" class="noshowing">访问llcm.top</a><br><br>
+            <p>注意：<strong>不要报告该网站（llcm.top）为钓鱼网站/冒充其他网站</strong>，因为他本就是原来网站（liaoxyucm.top）的下属网站（只不过内容基本一样）。这段话也可以用作为申诉该网站的证据<br>同时注意一下该网站的错误拼写但内容几乎相同，那些才可能是钓鱼网站/冒充其他网站<br>该网站不与“流量参谋”和“人重识别数据集”等有任何关系</p>
+
+			<br>
+			<label for="dont_show_again"><p><input type="checkbox" id="dont_show_again" />以后不再弹出本页面</p></label>
+
+			<script>
+				const elems = document.querySelectorAll(".noshowing");
+				elems.forEach(elem => {
+					elem.addEventListener("click", () => {
+						localStorage.setItem("dontshow_reacted", String(document.querySelector("#dont_show_again").checked));
+					});
+				});
+			</script>
+		</main>
+        <section class="footer">
+            <p>&copy; LiaoxyuCM × FrontMeteor 2024-2026</p>
+        </section>
+		
+	</body>
+</html>

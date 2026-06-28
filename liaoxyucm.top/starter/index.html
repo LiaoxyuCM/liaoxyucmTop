@@ -4,196 +4,117 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Starter | LiaoxyuCM</title>
-		<link rel="stylesheet" href="https://assets.liaoxyucm.top/style.css">
 		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
-		<script src="https://assets.liaoxyucm.top/global.js"></script>
 	</head>
 	<body>
-		<mainpage>
-			<noscript>
-				<h1 style="margin:4px;color:#f22">请将JavaScript打开谢谢</h1>
-			</noscript>
-			<h1 class="clock" style="margin:0">Starter</h1>
-			<h3 class="subclock">Starter</h3>
-			<div class="pare">
-				<div class="divition">
-					<select name="engineselect" class="engineselect" style="width:100px">
-						<optgroup label="searching_engine">
-							<option value="bing"       data-url="https://www.bing.com/search?q={text}">Bing</option>
-							<option value="baidu"      data-url="https://www.baidu.com/s?wd={text}">Baidu</option>
-							<option value="360"        data-url="https://www.so.com/s?q={text}">360</option>
-							<option value="google"     data-url="https://www.google.com/search?q={text}">Google</option>
-							<option value="sogou"      data-url="https://www.sogou.com/web?query={text}">Sogou</option>
-							<option value="yandex"     data-url="https://yandex.com/search/?text={text}">Yandex</option>
-							<option value="duckduckgo" data-url="https://duckduckgo.com/?q={text}">DuckDuckGo</option>
-						</optgroup>
-						<optgroup label="video_platform">
-							<option value="youtube"  data-url="https://www.youtube.com/results?search_query={text}">Youtube</option>
-							<option value="bilibili" data-url="https://search.bilibili.com/all?keyword={text}">Bilibili</option>
-							<option value="tiktok"   data-url="https://www.tiktok.com/search?q={text}">TikTok</option>
-							<option value="douyin"   data-url="https://www.douyin.com/root/search/{text}">Douyin</option>
-							<option value="kuaishou" data-url="https://www.kuaishou.com/search/video?searchKey={text}">KuaiShou</option>
-						</optgroup>
-						<optgroup label="coding_platform">
-							<option value="github"  data-url="https://github.com/search?q={text}">GitHub</option>
-							<option value="gitee"   data-url="https://so.gitee.com/?q={text}">Gitee</option>
-							<option value="codepen" data-url="https://codepen.io/search/pens?q={text}">CodePen</option>
-						</optgroup>
-						<optgroup label="domain_store">
-							<option value="dynadot"   data-url="https://www.dynadot.com/?domain={text}">DynaDot</option>
-							<option value="namecheap" data-url="https://www.namecheap.com/domains/registration/results/?domain={text}">NameCheap</option>
-							<option value="godaddy"   data-url="https://www.godaddy.com/domainsearch/find?domainToCheck={text}">GoDaddy</option>
-						</optgroup>
-						<optgroup label="more">
-							<option value="wikipedia" data-url="https://en.wikipedia.org/wiki/Special:Search?search={text}">WikiPedia</option>
-							<option value="minecraft" data-url="https://www.minecraft.net/search?q={text}">Minecraft</option>
-							<option value="modrinth"  data-url="https://modrinth.com/discover/mods?q={text}">Minecraft Modrinth</option>
-							<option value="mcwiki"    data-url="https://minecraft.wiki/?search={text}">Minecraft Wiki</option>
-							<option value="appstore"  data-url="https://apps.apple.com/iphone/search?term={text}">Apple AppStore</option>
-						</optgroup>
-					</select>
-					<input type="text" name="q" class="searchbar eng-c" autocomplete="off" placeholder="Type something..." style="transition:0s"/>
-					<input type="submit" class="submit" value="GO"/>
-				</div><br>
-				<div class="histories"></div>
+		<style>
+			@import url("https://fonts.loli.net/css?family=Poppins&display=swap");
+
+			* {
+				font-family: "Poppins", sans-serif;
+				color: #eee;
+			}
+			body {
+				background-color: #121212;
+				-ms-overflow-style: none;
+			}
+			main {
+				display: flex;
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				flex-direction: column;
+				align-items: center;
+			}
+			body::-webkit-scrollbar {
+				display: none;
+			}
+
+			.divition {
+				position: relative;
+				display: inline-block;
+			}
+			.eng-c {
+				position: relative;
+				outline: none!important;
+				border: none;
+				border-bottom: 2px solid #999;
+				padding: 5px;
+				width: 800px;
+				height: 25px;
+			    background-color: #121212;
+				transition: .3s all ease-in-out;
+			}
+			.eng-c::placeholder {
+				transition: .3s all ease-in-out;
+			}
+			.divition::before {
+				content: '';
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				width: 100%;
+				height: 2px;
+				background-color: #fff;
+				transform: scaleX(0);
+				transform-origin: left;
+				transition: transform 0.3s ease-in-out;
+				z-index: 300;
+			}
+			.divition:focus-within::before {
+				transform: scaleX(1);
+			}
+			.eng-c:hover::placeholder,
+			.eng-c:focus::placeholder {
+				letter-spacing: 1.5px;
+			}
+
+			@media (max-width:880px){ .eng-c {width: 500px} }
+			@media (max-width:550px){ .eng-c {width: 300px} }
+			@media (max-width:330px){ .eng-c {width: 200px} }
+			@media (max-width:220px){ .eng-c {width: 100px} }
+			@media (max-width:110px){ .eng-c {width: 50px } }
+		</style>
+		<main>
+			<div class="divition">
+				<input type="text" name="q" class="eng-c" autocomplete="off" placeholder="请将JavaScript打开，否则起始页不起任何作用"/>
 			</div>
-			<p verbose onclick="this.innerHTML = '我们将在你关闭标签页后清除网页内保存的历史数据<br><small>在本站的链接后面追加“?engine=引擎ID”（简洁模式将?换成&）可以设置默认搜索引擎</small>'">查看通知/技巧</p>
-			<section verbose class="links">
-				<a href="?simple=true" class="tosimple">简洁模式</a>
-				<a href="./oldengine.html">使用旧版起始页</a>
-				<a href="https://liaoxyucm.top">主站</a>
-			</section>
-			<section verbose class="footer">
-				<p>&copy; LiaoxyuCM 2024-2026</p>
-			</section>
-		</mainpage>
+		</main>
 		<script>
-			function getQueryParam(name){
-				const params = new URLSearchParams(window.location.search);
-				return params.get(name);
-			};
-
-			if (getQueryParam("simple") === "true") {
-				document.querySelectorAll("[verbose]").forEach(element => {
-					element.remove();
-				});
-			};
-
-			var searchbutton = document.querySelector("input.submit");
-			var engineselect = document.querySelector("select.engineselect");
-			var text = document.querySelector(".eng-c");
-			var clock = document.querySelector(".clock");
-			var subclock = document.querySelector(".subclock");
+			const text = document.querySelector(".eng-c");
 			let baseText = '';
 
+			text.focus();
 
-			if (getQueryParam("engine")) {
-				let tosimple = document.querySelector(".tosimple");
-				if (tosimple) tosimple.href += "&engine=" + getQueryParam("engine");
-				engineselect.value = getQueryParam("engine");
-			};
+			let hitokoto = '';
+			let rawHitokoto = '';
 
-			var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+			fetch("https://v1.hitokoto.cn/").then((resp) => resp.json()).then((data) => {
+				rawHitokoto = data.hitokoto;
+				hitokoto = ' - ' + rawHitokoto;
+			}).catch((e) => {});
+
+			const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+			const now = new Date();
+			const pad = x => String(x).padStart(2,'0');
 			function updateClock(){
-				const now = new Date();
-				baseText = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
-				subText = `${String(month[now.getMonth()])} ${String(now.getDate()).padStart(2,'0')}, ${now.getFullYear()}`;
-				clock.textContent = baseText;
-				subclock.textContent = subText;
+				now.setTime(Date.now());
+				baseText = pad(now.getHours()) + ':' + pad(now.getMinutes()) + ':' + pad(now.getSeconds());
+				subText = `, ${String(month[now.getMonth()])} ${pad(now.getDate())}, ${now.getFullYear()}`;
+				text.placeholder = baseText + (window.innerWidth > 220 ? subText : "") + (window.innerWidth > 550 ? hitokoto : "");
+				requestAnimationFrame(updateClock);
 			};
 			updateClock();
+
 			function escapeHtml(str){
 				return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 			};
-
-			const pare = document.querySelector('.pare');
-			const histories = document.querySelector('.pare .histories');
-
-			text.addEventListener("focus", () => {
-				histories.classList.add('show');
-			});
-
-			document.addEventListener('click', (e) => {
-				if (!pare.contains(e.target)) {
-					histories.classList.remove('show');
-				};
-			});
-
-			engineselect.addEventListener('input', () => {
-				text.placeholder = `当前搜索引擎ID: ${engineselect.value}`
-			})
-
-			function checkHistory() {
-				const historiess = document.querySelectorAll(".pare .histories .history");
-				let isBolded = false;
-				text.style.fontWeight = "normal";
-				historiess.forEach((el) => {
-					const content = el.querySelector(".content");
-					if (content.textContent.trim().toLowerCase() === text.value.trim().toLowerCase()) {
-						text.style.fontWeight = "bold";
-						isBolded = true;
-					} else {
-						if (!isBolded) {
-							text.style.fontWeight = "normal";
-						};
-					};
-					if (content.textContent.trim().toLowerCase().startsWith(text.value.trim().toLowerCase())) {
-						el.style.maxHeight = "100px";
-						el.style.marginTop = "5px";
-						el.style.padding = "5px";
-						el.style.border = "1px solid #fff";
-					} else {
-						el.style.maxHeight = "0";
-						el.style.marginTop = "0";
-						el.style.padding = "0";
-						el.style.border = "0";
-					};
-				});
-			};
-
-			text.addEventListener("input", () => {
-				checkHistory();
-			});
-
-			function newHistory(engine, str) {
-				const parentz = document.querySelector(".pare .histories");
-				const latestchild = parentz.firstChild;
-				const historyBase = document.createElement("div");
-				historyBase.className = "history";
-				historyBase.setAttribute("bordered", "");
-				historyBase.style.marginTop = "5px";
-				historyBase.style.display = "flex";
-				historyBase.style.flexDirection = "row";
-				historyBase.style.alignItems = "center";
-				historyBase.style.overflow = "hidden";
-				let redirectLink = document.querySelector(`select.engineselect option[value="${engine}"]`).dataset.url.replace(/\{text\}/g, encodeURIComponent(str));
-				historyBase.innerHTML = `
-				<p>${document.querySelector("select.engineselect option[value=\""+engine+"\"]").textContent} =&gt;</p>
-				<a href="${redirectLink}" target="_blank" class="content">${escapeHtml(str)}</a>
-				<button class="delete" no-button-style>删除</button>
-				`;
-				historyBase.querySelector('.delete').addEventListener("click", (e) => {
-					e.stopPropagation();
-
-					historyBase.remove();
-					checkHistory();
-				});
-				parentz.insertBefore(historyBase, latestchild);
-			};
-
-			setInterval(updateClock, 200);
 			function dosearch(){
-				let query = encodeURIComponent(text.value.trim());
-				let em = document.querySelector(`option[value="${engineselect.value}"]`);
-				let redirectLink = em.dataset.url.replace(/\{text\}/g, query);
+				let query = encodeURIComponent(text.value.trim()) || (window.innerWidth > 550 ? encodeURIComponent(rawHitokoto) : "");
+				let redirectLink = `https://bing.com/?q=${query}`;
 				window.open(redirectLink, "_blank");
-				if (!(text.value.trim() === "")) {
-					newHistory(engineselect.value, text.value.trim());
-				};
 			};
-			searchbutton.addEventListener("click", () => {
-				dosearch();
-			});
 			text.addEventListener('keydown', function(event) {
 				if (event.key === 'Enter' || event.keyCode === 13) {
 					dosearch();

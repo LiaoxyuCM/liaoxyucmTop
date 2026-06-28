@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>用户详情 - 内部账户系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: #f5f7fa;
+            color: #1f2d3d;
+            line-height: 1.5;
+        }
+
+        /* 整体容器：左对齐，不居中，常见后台风格 */
+        .app-container {
+            max-width: 1000px;
+            margin: 0;
+            padding: 24px 32px;
+        }
+
+        /* 顶部导航风格（简单模拟其他网站） */
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e2a3a;
+        }
+        .api-hint {
+            font-size: 12px;
+            color: #8f9bb3;
+            background: #f0f2f5;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-family: monospace;
+        }
+
+        /* 主要内容卡片 - 无圆角巨大阴影，更像普通面板 */
+        .detail-panel {
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e9ecef;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+        }
+
+        /* 头部区域：显示用户名占位等 */
+        .panel-header {
+            padding: 18px 24px;
+            background: #fefefe;
+            border-bottom: 1px solid #edf2f7;
+        }
+        .panel-header h2 {
+            font-size: 18px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        /* 内容区域 */
+        .info-content {
+            padding: 24px;
+        }
+
+        /* 用户基本信息组：昵称 + 签名（上下排列） */
+        .user-basic {
+            margin-bottom: 28px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f0f2f6;
+        }
+        .nickname {
+            font-size: 22px;
+            font-weight: 600;
+            color: #0b2b3d;
+            margin-bottom: 6px;
+        }
+        .signature {
+            font-size: 13px;
+            color: #7e8c9e;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        /* 其他字段列表样式（权限、积分）沿用清晰左对齐表格风格 */
+        .fields-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .field-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            font-size: 14px;
+        }
+        .field-label {
+            width: 80px;
+            flex-shrink: 0;
+            font-weight: 500;
+            color: #5a687a;
+        }
+        .field-value {
+            flex: 1;
+            color: #1e2f3e;
+        }
+
+        /* 权限徽章样式 */
+        .privilege-badge {
+            display: inline-block;
+            background: #ecf5ff;
+            color: #2c6e9e;
+            border-radius: 16px;
+            padding: 2px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 8px;
+            margin-bottom: 6px;
+            border: 1px solid #d9e8ff;
+        }
+        .points-value {
+            font-weight: 600;
+            color: #e68a2e;
+            background: #fff5eb;
+            padding: 2px 12px;
+            border-radius: 30px;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        /* 加载 / 错误 / 空状态 */
+        .status-box {
+            padding: 40px 24px;
+            text-align: center;
+            background: #fff;
+            border-radius: 8px;
+            border: 1px solid #eef2f6;
+        }
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid #e2e8f0;
+            border-top-color: #2c6e9e;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin: 0 auto 16px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .error-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+        .btn-retry {
+            background: #2c6e9e;
+            border: none;
+            color: white;
+            padding: 6px 20px;
+            border-radius: 30px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: 0.2s;
+        }
+        .btn-retry:hover {
+            background: #1f547c;
+        }
+
+
+        @media (max-width: 640px) {
+            .app-container {
+                padding: 16px;
+            }
+            .field-item {
+                flex-direction: column;
+                gap: 6px;
+            }
+            .field-label {
+                width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <!-- 模拟常规网站的顶部栏 -->
+
+    <div class="detail-panel" id="userPanel">
+        <div class="panel-header">
+            <h2>用户信息</h2>
+        </div>
+        <div id="dynamicContent">
+            <!-- 动态内容会渲染到这里 -->
+            <div class="status-box">
+                <div class="spinner"></div>
+                <div>加载中...</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        // 1. 从 URL 获取 user 参数
+        function getUsernameFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('user');
+        }
+
+        const dynamicContainer = document.getElementById('dynamicContent');
+        const hintSpan = document.getElementById('apiEndpointHint');
+
+        // 防XSS辅助
+        function escapeHtml(str) {
+            if (str === undefined || str === null) return '';
+            return String(str).replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        // 渲染权限列表
+        function renderPrivileges(privilegeArray) {
+            if (!Array.isArray(privilegeArray) || privilegeArray.length === 0) {
+                return '<span style="color:#9aa8b9;">无权限标识</span>';
+            }
+            return privilegeArray.map(p => `<span class="privilege-badge">${escapeHtml(p)}</span>`).join('');
+        }
+
+        // 渲染积分样式
+function renderPoints(points) {
+    let num = typeof points === 'number' ? points : Number(points);
+    if (isNaN(num)) num = 0;
+    
+    // 等级配置：积分区间 [下限, 上限) -> 等级名称
+    const levelConfig = [
+        { min: 0, max: 100, name: '青铜I' },
+        { min: 100, max: 300, name: '青铜II' },
+        { min: 300, max: 600, name: '青铜III' },
+        { min: 600, max: 1000, name: '青铜IV' },
+        { min: 1000, max: 1500, name: '青铜V' },
+        { min: 1500, max: 2100, name: '白银I' },
+        { min: 2100, max: 2800, name: '白银II' },
+        { min: 2800, max: 3600, name: '白银III' },
+        { min: 3600, max: 4500, name: '白银IV' },
+        { min: 4500, max: 5500, name: '白银V' },
+        { min: 5500, max: 6600, name: '黄金I' },
+        { min: 6600, max: 7800, name: '黄金II' },
+        { min: 7800, max: 9100, name: '黄金III' },
+        { min: 9100, max: 10500, name: '黄金IV' },
+        { min: 10500, max: 12000, name: '黄金V' },
+        { min: 12000, max: 13600, name: '铂金I' },
+        { min: 13600, max: 15300, name: '铂金II' },
+        { min: 15300, max: 17100, name: '铂金III' },
+        { min: 17100, max: 19000, name: '铂金IV' },
+        { min: 19000, max: 21000, name: '铂金V' },
+        { min: 21000, max: 23100, name: '钻石I' },
+        { min: 23100, max: 25300, name: '钻石II' },
+        { min: 25300, max: 27600, name: '钻石III' },
+        { min: 27600, max: 30000, name: '钻石IV' },
+        { min: 30000, max: 32500, name: '钻石V' },
+        { min: 32500, max: 35100, name: '星耀I' },
+        { min: 35100, max: 37800, name: '星耀II' },
+        { min: 37800, max: 40600, name: '星耀III' },
+        { min: 40600, max: 43500, name: '星耀IV' },
+        { min: 43500, max: 46500, name: '星耀V' },
+        { min: 46500, max: 49600, name: '王者I' },
+        { min: 49600, max: 52800, name: '王者II' },
+        { min: 52800, max: 56100, name: '王者III' },
+        { min: 56100, max: 59500, name: '王者IV' },
+        { min: 59500, max: 63000, name: '王者V' },
+        { min: 63000, max: 66600, name: '至尊王者I' },
+        { min: 66600, max: 70300, name: '至尊王者II' },
+        { min: 70300, max: 74100, name: '至尊王者III' },
+        { min: 74100, max: 78000, name: '至尊王者IV' },
+        { min: 78000, max: 82000, name: '至尊王者V' },
+        { min: 82000, max: 86100, name: '超级王者I' },
+        { min: 86100, max: 90300, name: '超级王者II' },
+        { min: 90300, max: 94600, name: '超级王者III' },
+        { min: 94600, max: 99000, name: '超级王者IV' },
+        { min: 99000, max: Infinity, name: '超级王者V' },
+    ];
+    
+    // 查找对应等级
+    let currentLevel = levelConfig.find(level => num >= level.min && num < level.max);
+    
+    // 保险：如果没找到（比如负数），默认青铜I
+    if (!currentLevel) {
+        currentLevel = { name: '青铜I' };
+    }
+    
+    // 下一等级所需积分（用于进度提示，可选）
+    const nextLevel = levelConfig.find(level => level.min > num);
+    const nextLevelPoints = nextLevel ? nextLevel.min : null;
+    const progressPercent = nextLevelPoints 
+        ? Math.min(100, Math.floor((num - currentLevel.min) / (nextLevelPoints - currentLevel.min) * 100))
+        : 100;
+    
+    // 不同等级对应的徽章样式颜色
+    const levelColorMap = {
+        '超级王者': '#836333',
+        '至尊王者': '#9370f5',
+        '王者': '#ff6b6b',
+        '星耀': '#a0f0ff',
+        '钻石': '#b9f2ff',
+        '铂金': '#d6c39c',
+        '黄金': '#d6b600',
+        '白银': '#c0c0c0',
+        '青铜': '#cd7f32',
+    };
+    
+    let levelColor = '#6c757d';
+    for (const [key, color] of Object.entries(levelColorMap)) {
+        if (currentLevel.name.includes(key)) {
+            levelColor = color;
+            break;
+        }
+    }
+
+	const progressBarHtml = nextLevel ? `
+        <div style="margin-top: 12px;">
+            <div style="display: flex; justify-content: space-between; font-size: 11px; color: #7e8c9e; margin-bottom: 4px;">
+                <span>距下一级 ${nextLevel.name}</span>
+                <span>${num} / ${nextLevelPoints}</span>
+            </div>
+            <div style="background: #e9ecef; border-radius: 10px; overflow: hidden; height: 8px;">
+                <div style="width: ${progressPercent}%; background: linear-gradient(90deg, #ffa726, #ff6b6b); height: 100%; border-radius: 10px; transition: width 0.3s;"></div>
+            </div>
+        </div>
+    ` : '<div style="margin-top: 8px; font-size: 11px; color: #ff9800;">✨ 已达最高等级！</div>';
+
+    
+    // 返回带等级的积分展示（可选进度条样式）
+    return `
+        <div style="display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <span class="points-value" style="background: #f5f5f5; padding: 4px 14px;">
+                ${num} 积分
+            </span>
+            <span style="background: ${levelColor}20; color: ${levelColor}; border: 1px solid ${levelColor}40; 
+                         padding: 4px 14px; border-radius: 30px; font-size: 13px; font-weight: 500;">
+                🏆 ${currentLevel.name}
+            </span>
+        </div>
+		${progressBarHtml}
+    `;
+}
+
+        // 核心：渲染成功后的用户资料（签名在昵称下方，小字灰色）
+        function renderSuccessDetail(data) {
+            // data: { nickname, sign, privilege, points }
+            const nickname = data.nickname ?? '未设置昵称';
+            const signature = data.sign ?? '暂无签名';
+            const privilegeList = Array.isArray(data.privilege) ? data.privilege : [];
+            const points = data.points ?? 0;
+
+            // 注意布局要求：签名在昵称下方，样式灰色小字
+            return `
+                <div class="info-content">
+                    <div class="user-basic">
+                        <div class="nickname">${escapeHtml(nickname)}</div>
+                        <div class="signature">${escapeHtml(signature)}</div>
+                    </div>
+                    <div class="fields-list">
+                        <div class="field-item">
+                            <div class="field-label">🔑 权限</div>
+                            <div class="field-value">${renderPrivileges(privilegeList)}</div>
+                        </div>
+                        <div class="field-item">
+                            <div class="field-label">💰 积分</div>
+                            <div class="field-value">${renderPoints(points)}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // 显示错误界面
+        function showError(errorMsg, usernameForRetry) {
+            if (!dynamicContainer) return;
+            dynamicContainer.innerHTML = `
+                <div class="status-box">
+                    <div class="error-icon">⚠️</div>
+                    <div style="color:#c2410c; margin-bottom:8px;">${escapeHtml(errorMsg)}</div>
+                    <button class="btn-retry" id="retryBtn">重新加载</button>
+                </div>
+            `;
+            const retryBtn = document.getElementById('retryBtn');
+            if (retryBtn && usernameForRetry) {
+                retryBtn.addEventListener('click', () => fetchUserDetail(usernameForRetry));
+            } else if (retryBtn) {
+                retryBtn.addEventListener('click', () => {
+                    const username = getUsernameFromUrl();
+                    if (username) fetchUserDetail(username);
+                    else showError('缺少 user 参数，无法重试', null);
+                });
+            }
+        }
+
+        function showLoading() {
+            if (!dynamicContainer) return;
+            dynamicContainer.innerHTML = `
+                <div class="status-box">
+                    <div class="spinner"></div>
+                    <div>正在获取账户详情...</div>
+                </div>
+            `;
+        }
+
+        function showMissingParam() {
+            if (!dynamicContainer) return;
+            dynamicContainer.innerHTML = `
+                <div class="status-box">
+                    <div style="font-size:32px; margin-bottom:12px;">🔍</div>
+                    <div style="font-weight:500;">缺少用户参数</div>
+                    <div style="font-size:13px; color:#7a889e; margin-top:8px;">请在 URL 中使用 ?user=用户名 访问</div>
+                </div>
+            `;
+        }
+
+        // 发起请求
+        async function fetchUserDetail(username) {
+            if (!username || username.trim() === '') {
+                showMissingParam();
+                if (hintSpan) hintSpan.innerText = '无效的用户名';
+                return;
+            }
+            const safeUser = encodeURIComponent(username.trim());
+            const apiUrl = `https://api.liaoxyucm.top/accounts/getdetail.php?username=${safeUser}`;
+            if (hintSpan) hintSpan.innerText = `📡 当前查询: ${escapeHtml(username.trim())}`;
+
+            showLoading();
+
+            try {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 20000);
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    signal: controller.signal,
+                    headers: { 'Accept': 'application/json' }
+                });
+                clearTimeout(timeoutId);
+
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+                let result;
+                try {
+                    result = await response.json();
+                } catch {
+                    throw new Error('找不到该用户');
+                }
+
+                // 校验后端返回的业务状态
+                if (result && result.status === 0 && result.data) {
+                    const detailHtml = renderSuccessDetail(result.data);
+                    if (dynamicContainer) dynamicContainer.innerHTML = detailHtml;
+                } else {
+                    const errMsg = result?.message || `业务错误 code: ${result?.status}`;
+                    throw new Error(errMsg);
+                }
+            } catch (err) {
+                console.error('请求详情失败:', err);
+                let friendlyMsg = '';
+                if (err.name === 'AbortError') friendlyMsg = '请求超时，请稍后重试';
+                else if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))
+                    friendlyMsg = '网络连接失败，请检查网络';
+                else friendlyMsg = err.message || '加载失败';
+                showError(friendlyMsg, username);
+            }
+        }
+
+        // 初始化
+        function init() {
+            const username = getUsernameFromUrl();
+            if (username && username.trim()) {
+                fetchUserDetail(username);
+            } else {
+                showMissingParam();
+                if (hintSpan) hintSpan.innerText = '❓ 缺少 user 参数';
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    })();
+</script>
+</body>
+</html>
