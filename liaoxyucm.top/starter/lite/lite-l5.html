@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Starter-v3lite-l5 | LiaoxyuCM</title>
+	<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+</head>
+<body>
+	<main>
+		<div class="divition">
+			<input type="text" name="q" class="eng-c" autocomplete="off" placeholder="请打开JavaScript，否则起始页没有任何作用" autofocus/>
+		</div>
+	</main>
+	<script>
+		// Focus input bar
+		const $text = document.querySelector(".eng-c");
+
+		// Setup placeholder
+		$text.placeholder = "搜索...";
+
+		// Handle search
+		$text.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter' || event.keyCode === 13) {
+				let query = encodeURIComponent($text.value.trim()) || (window.innerWidth > 550 ? encodeURIComponent(rawHitokoto) : "");
+				window.open(`https://bing.com/?q=${query}`, "_blank");
+				$text.value = "";
+			}
+		});
+	</script>
+</body>
+</html>

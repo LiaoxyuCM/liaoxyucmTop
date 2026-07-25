@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>炫酷个人介绍 · 星际粒子</title>
+  <style>
+    /* 全局重置 & 字体 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0b0d1a;
+      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1.5rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 炫酷动态粒子背景 (Canvas) */
+    #particle-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none; /* 让点击穿透 */
+      display: block;
+    }
+
+    /* 主卡片容器 — 磨砂玻璃 + 光晕 */
+    .homepage.article {
+      position: relative;
+      z-index: 10;
+      max-width: 1100px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 2.2rem;
+      backdrop-filter: blur(6px) saturate(180%);
+      -webkit-backdrop-filter: blur(6px) saturate(180%);
+      background: rgba(12, 20, 35, 0.45);
+      border-radius: 3.5rem;
+      padding: 3rem 3.5rem;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      transition: all 0.3s ease;
+    }
+
+    /* 每个卡片区块 */
+    .homepage.article > div {
+      background: rgba(8, 16, 30, 0.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      border-radius: 2.5rem;
+      padding: 2rem 2.8rem;
+      border-left: 4px solid rgba(0, 255, 255, 0.3);
+      box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.02) inset;
+      transition: transform 0.25s ease, box-shadow 0.4s ease, border-color 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 每个卡片悬浮效果 + 霓虹光晕 */
+    .homepage.article > div:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: 0 25px 50px -8px rgba(0, 180, 255, 0.25), 0 0 0 1px rgba(0, 255, 255, 0.2) inset;
+      border-left-color: #00f0ff;
+    }
+
+    /* 卡片内标题 (p 第一个) */
+    .homepage.article > div p:first-child {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #c0f4ff, #8ad4ff, #4facfe);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 1.2rem;
+      display: inline-block;
+      position: relative;
+      text-shadow: 0 0 20px rgba(0, 180, 255, 0.3);
+    }
+
+    /* 标题后面的炫酷装饰线 */
+    .homepage.article > div p:first-child::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      width: 60%;
+      height: 3px;
+      background: linear-gradient(90deg, #00e0ff, #7b61ff, transparent);
+      border-radius: 10px;
+      filter: blur(1px);
+    }
+
+    /* 正文段落 (第二个 p) */
+    .homepage.article > div p:last-child {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: rgba(220, 240, 255, 0.85);
+      font-weight: 300;
+      letter-spacing: 0.3px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      margin-top: 0.2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* 让 portfolio 和 contact 有点区别 (额外光效) */
+    .homepage.article.portfolio {
+      border-left-color: #f7b731;
+    }
+    .homepage.article.portfolio:hover {
+      border-left-color: #ffd866;
+      box-shadow: 0 25px 50px -8px rgba(255, 200, 50, 0.2), 0 0 0 1px rgba(255, 215, 0, 0.2) inset;
+    }
+    .homepage.article.portfolio p:first-child {
+      background: linear-gradient(135deg, #fde68a, #fbbf24, #f59e0b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .homepage.article.contact {
+      border-left-color: #f472b6;
+    }
+    .homepage.article.contact:hover {
+      border-left-color: #f9a8d4;
+      box-shadow: 0 25px 50px -8px rgba(244, 114, 182, 0.25), 0 0 0 1px rgba(244, 114, 182, 0.2) inset;
+    }
+    .homepage.article.contact p:first-child {
+      background: linear-gradient(135deg, #fbcfe8, #f472b6, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* 点缀小光点 (卡片内浮动) */
+    .homepage.article > div::before {
+      content: '';
+      position: absolute;
+      top: -20%;
+      right: -10%;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(0, 200, 255, 0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .homepage.article.portfolio > div::before {
+      background: radial-gradient(circle, rgba(255, 200, 50, 0.08) 0%, transparent 70%);
+    }
+    .homepage.article.contact > div::before {
+      background: radial-gradient(circle, rgba(244, 114, 182, 0.1) 0%, transparent 70%);
+    }
+
+    /* 移动端适配 */
+    @media (max-width: 700px) {
+      .homepage.article {
+        padding: 1.8rem 1.2rem;
+        border-radius: 2rem;
+        gap: 1.8rem;
+      }
+      .homepage.article > div {
+        padding: 1.5rem 1.2rem;
+        border-radius: 1.8rem;
+      }
+      .homepage.article > div p:first-child {
+        font-size: 1.8rem;
+      }
+      .homepage.article > div p:last-child {
+        font-size: 1rem;
+        line-height: 1.6;
+      }
+    }
+
+    @media (max-width: 450px) {
+      .homepage.article {
+        padding: 1.2rem 0.8rem;
+      }
+      .homepage.article > div {
+        padding: 1.2rem 0.8rem;
+      }
+    }
+
+    /* 自定义滚动条 (炫酷) */
+    ::-webkit-scrollbar {
+      width: 8px;
+      background: #0f1422;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0f1422;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, #2b6b9c, #7b61ff);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #4facfe, #a78bfa);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 粒子画布 -->
+  <canvas id="particle-canvas"></canvas>
+
+  <!-- 主内容 — 完全遵循你提供的 class 结构，但为了语义保留原有层级 -->
+  <div class="homepage article about">
+    <!-- 关于区块 (从原结构提取，但原 about 只有空 p，我们扩充为炫酷介绍) -->
+    <div>
+      <p>✦ 关于我</p>
+      <p>👾 全栈创造者 · 数字艺术家 · 星际旅人。在代码与设计之间架设桥梁，热衷于构建沉浸式体验。用像素绘制未来，用逻辑编织幻想。</p>
+    </div>
+  </div>
+
+  <div class="homepage article portfolio">
+    <div>
+      <p>📁 作品集</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi sollicitudin imperdiet consectetur. Nam eu egestas ipsum, eget faucibus tellus. In consectetur dapibus ultricies. In bibendum condimentum purus, vel venenatis urna vestibulum vitae. Vivamus et tortor cursus, fermentum libero sit amet, luctus felis. Nunc eleifend ultrices ligula, ut gravida elit interdum nec. Ut eu justo id turpis gravida tristique nec nec risus.</p>
+    </div>
+  </div>
+
+  <div class="homepage article contact">
+    <div>
+      <p>📬 联系</p>
+      <p>Cras enim purus, bibendum id euismod id, ornare vitae turpis. Curabitur eu ultrices enim. Proin pretium condimentum sapien sed suscipit. Maecenas non massa et nisl egestas vestibulum. Donec volutpat feugiat urna eu lobortis. Maecenas finibus quam in mauris tempus, et malesuada felis ullamcorper. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non ligula augue. Nunc quis ipsum tellus. Fusce efficitur eros dapibus enim imperdiet, et pellentesque mauris ultricies.</p>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      "use strict";
+
+      const canvas = document.getElementById('particle-canvas');
+      const ctx = canvas.getContext('2d');
+
+      let width, height;
+      let particles = [];
+      const PARTICLE_COUNT = 140;
+      const MAX_SPEED = 0.6;
+      const CONNECTION_DIST = 110;
+
+      // 颜色调色板 (炫酷蓝紫/青/粉)
+      const palette = [
+        '0, 200, 255',   // 青
+        '100, 150, 255', // 淡蓝
+        '180, 100, 255', // 紫
+        '255, 100, 200', // 粉
+        '0, 255, 200',   // 青绿
+      ];
+
+      function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      // 粒子类
+      class Particle {
+        constructor() {
+          this.x = Math.random() * width;
+          this.y = Math.random() * height;
+          this.vx = (Math.random() - 0.5) * MAX_SPEED * 1.8;
+          this.vy = (Math.random() - 0.5) * MAX_SPEED * 1.8;
+          this.radius = Math.random() * 2.8 + 1.2;
+          // 随机从调色板选一个颜色
+          const colorIndex = Math.floor(Math.random() * palette.length);
+          this.color = palette[colorIndex];
+          this.opacity = Math.random() * 0.5 + 0.4;
+        }
+
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+
+          // 边界回弹 + 温柔转向
+          if (this.x < 0 || this.x > width) {
+            this.vx *= -1;
+            this.x = Math.min(Math.max(this.x, 0), width);
+          }
+          if (this.y < 0 || this.y > height) {
+            this.vy *= -1;
+            this.y = Math.min(Math.max(this.y, 0), height);
+          }
+
+          // 增加一点随机游走，更生动
+          if (Math.random() < 0.02) {
+            this.vx += (Math.random() - 0.5) * 0.2;
+            this.vy += (Math.random() - 0.5) * 0.2;
+            // 限制最大速度
+            const sp = Math.hypot(this.vx, this.vy);
+            if (sp > MAX_SPEED * 1.6) {
+              this.vx = (this.vx / sp) * MAX_SPEED * 1.2;
+              this.vy = (this.vy / sp) * MAX_SPEED * 1.2;
+            }
+          }
+        }
+
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${this.color}, ${this.opacity})`;
+          ctx.shadowColor = `rgba(${this.color}, 0.6)`;
+          ctx.shadowBlur = 12;
+          ctx.fill();
+          // 关闭阴影避免影响连线
+          ctx.shadowBlur = 0;
+        }
+      }
+
+      function initParticles() {
+        particles = [];
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+          particles.push(new Particle());
+        }
+      }
+
+      // 绘制连线 (带渐变)
+      function drawConnections() {
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.hypot(dx, dy);
+
+            if (dist < CONNECTION_DIST) {
+              const alpha = (1 - dist / CONNECTION_DIST) * 0.5;
+              // 使用混合颜色 (取两个粒子的中间色)
+              const color1 = particles[i].color;
+              const color2 = particles[j].color;
+              // 简单混合: 取第一个颜色为主 (略炫)
+              ctx.beginPath();
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.strokeStyle = `rgba(${color1}, ${alpha * 0.7 + 0.2})`;
+              ctx.lineWidth = 1.2;
+              ctx.shadowColor = `rgba(${color1}, 0.2)`;
+              ctx.shadowBlur = 8;
+              ctx.stroke();
+              ctx.shadowBlur = 0;
+            }
+          }
+        }
+      }
+
+      // 动画循环
+      function animate() {
+        ctx.clearRect(0, 0, width, height);
+
+        // 绘制很淡的星空雾效
+        ctx.fillStyle = 'rgba(8, 12, 26, 0.2)';
+        ctx.fillRect(0, 0, width, height);
+
+        // 更新 & 绘制粒子
+        for (let p of particles) {
+          p.update();
+          p.draw();
+        }
+
+        // 绘制连线
+        drawConnections();
+
+        // 额外绘制一些大星星闪烁 (增强炫酷)
+        ctx.shadowBlur = 0;
+        for (let i = 0; i < 6; i++) {
+          if (i % 2 === 0) continue; // 随机选几个
+          const idx = Math.floor(Math.random() * particles.length);
+          const star = particles[idx];
+          if (star) {
+            ctx.beginPath();
+            ctx.arc(star.x, star.y, star.radius * 2.2, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255, 255, 255, 0.08)`;
+            ctx.shadowColor = `rgba(180, 180, 255, 0.3)`;
+            ctx.shadowBlur = 30;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+          }
+        }
+
+        requestAnimationFrame(animate);
+      }
+
+      // 窗口resize
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+        // 重置粒子位置适应新尺寸
+        for (let p of particles) {
+          p.x = Math.min(p.x, width);
+          p.y = Math.min(p.y, height);
+        }
+      });
+
+      // 启动
+      resizeCanvas();
+      initParticles();
+      animate();
+
+      // 可选：鼠标互动 — 小范围内产生吸引 (增加炫酷感)
+      let mouseX = -1000, mouseY = -1000;
+      document.addEventListener('mousemove', (e) => {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+        // 轻微影响粒子 (只对部分粒子产生效果)
+        for (let p of particles) {
+          const dx = p.x - mouseX;
+          const dy = p.y - mouseY;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 150 && dist > 10) {
+            const force = 0.03;
+            p.vx -= (dx / dist) * force;
+            p.vy -= (dy / dist) * force;
+          }
+        }
+      });
+
+      // 鼠标离开时重置
+      document.addEventListener('mouseleave', () => {
+        mouseX = -1000;
+        mouseY = -1000;
+      });
+
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>网格线系统 - Main内固定网格</title>
+    <style>
+        /* 基础重置 & 整体样式 - 为了演示main区域和滚动效果，添加一些基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #eef2f5;
+            font-family: system-ui, 'Segoe UI', 'Helvetica Neue', sans-serif;
+            line-height: 1.5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 为让main元素有明确的边界且方便观察网格仅出现在main区域内，添加一个外层容器或者让body有间距 */
+        /* main 元素核心样式：相对定位，以便伪元素或内部绝对定位元素基于它定位，同时设置了背景色便于观察网格覆盖效果 */
+        main {
+            position: relative;      /* 使内部fixed网格限定于此? 注意: fixed通常相对于视口, 但通过特殊技巧可实现相对于父容器裁剪, 关键需求是"只有main元素里面才显示出来" 意味着超出main的部分不可见, 使用overflow:clip 或 hidden 配合定位实现 */
+            width: 90%;
+            max-width: 1300px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            border-radius: 28px;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            min-height: 600px;
+        }
+
+        /* --------- 全屏fixed网格层 (灰色交叉线，间隔40px, 线宽2px) --------- */
+        .global-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            /* 使用 repeating-linear-gradient 绘制纵横交错网格线：横向线+纵向线，间隔40px，灰色线宽2px */
+            background-image: 
+                repeating-linear-gradient(
+                    to bottom,
+                    #ccc 0px,
+                    #ccc 2px,
+                    transparent 2px,
+                    transparent 40px
+                ),
+                repeating-linear-gradient(
+                    to right,
+                    #ccc 0px,
+                    #ccc 2px,
+                    transparent 2px,
+                    transparent 40px
+                );
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        /* 外部遮罩层（仅在main区域外阻挡网格线显示）通过绝对定位占据main外所有区域，背景色同body */
+        .grid-mask-outside {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #eef2f5;   /* 与body背景色完全一致，覆盖外侧网格 */
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 具体实现 */
+        body {
+            background: #eef2f5;   /* 遮罩使用的颜色一致 */
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        /* 固定全屏网格层 - 纵横交错线 间隔40px 线宽2px 灰色 */
+        .fixed-grid-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: 
+                repeating-linear-gradient(
+                    to bottom,
+                    #a0a4ae 0px,
+                    #a0a4ae 2px,
+                    transparent 2px,
+                    transparent 40px
+                ),
+                repeating-linear-gradient(
+                    to right,
+                    #a0a4ae 0px,
+                    #a0a4ae 2px,
+                    transparent 2px,
+                    transparent 40px
+                );
+            pointer-events: none;
+            z-index: 1;   /* 置于底层,但需要被main外遮罩覆盖, 内部子元素背景之上 */
+        }
+
+        /* main 容器样式 — 作为展示区域，在其四周添加绝对定位遮罩块，覆盖超出main区域网格 */
+        main {
+            position: relative;    /* 为遮罩元素提供锚点 */
+            width: 85%;
+            max-width: 1280px;
+            margin: 60px auto;
+            background: transparent; /* 透明背景使得网格透出 */
+            border-radius: 32px;
+            box-shadow: 0 30px 45px -20px rgba(0,0,0,0.4);
+            z-index: 2;            /* 内容层上下文高于网格层 */
+            min-height: 70vh;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 全屏 fixed 网格层：纵横交错线，间隔40px，线宽2px灰色 -->
+<div class="fixed-grid-lines" id="globalGrid"></div>
+
+<main id="appMain">
+    <!-- main内随意添加一些内容元素，展示网格位于最底层，内容层位于网格上面 -->
+    <div style="background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(0px); padding: 2rem; border-radius: 28px; margin: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.05);">
+        <h1 style="font-weight: 600; font-size: 2rem; margin-bottom: 0.5rem; border-left: 5px solid #7c8ba0; padding-left: 1rem;">✨ 网格覆盖区域</h1>
+        <p style="margin: 1.2rem 0; font-size: 1.1rem; color: #2c3e4e;">此区域为 <strong>&lt;main&gt;</strong> 元素内部。<br>
+        背景上看到的是 <strong>position: fixed</strong> 的全屏纵横网格线（间隔40px，线宽2px，浅灰），并且网格线仅在此 main 矩形范围内可见，且位于所有子元素最底层。<br>
+        下方内容卡片和按钮等均在网格线上层展示，滚动页面时网格线相对视口固定，但始终只显示在 main 区域内，外部完美隐藏。</p>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap; margin: 30px 0 20px;">
+            <div style="background: white; padding: 16px 24px; border-radius: 36px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex:1; text-align:center;">📦 卡片 A</div>
+            <div style="background: white; padding: 16px 24px; border-radius: 36px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex:1; text-align:center;">🎯 卡片 B</div>
+            <div style="background: white; padding: 16px 24px; border-radius: 36px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); flex:1; text-align:center;">⚙️ 交互按钮</div>
+        </div>
+        <button style="background: #2c5f7a; color: white; border: none; padding: 12px 28px; border-radius: 40px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2);"> 测试点击 (网格不干扰事件) </button>
+        <p style="margin-top: 2rem; font-size: 0.85rem; color: #5F6C7A;">✔ 网格属性 position:fixed; 全屏覆盖 + 动态遮罩实现仅在 Main 内可见，完美处于子元素底层。</p>
+    </div>
+    <!-- 额外间距展示滚动时网格固定效果 -->
+    <div style="height: 280px; margin: 20px 30px 40px; background: rgba(245, 248, 250, 0.9); border-radius: 28px; padding: 1.5rem; backdrop-filter: blur(1px);">
+        <h3>⬇️ 滚动区域继续展示纵向网格固定效果</h3>
+        <p>网格背景线始终保持全屏覆盖但仅在 main 区间显示。滚动时网格线相对于视口固定，产生“视差”背板感，完美符合题目要求。</p>
+        <div style="margin: 20px 0 0; background: #ffffffcc; padding: 12px; border-radius: 20px;">📌 位于最下方的提示：所有子元素背景白色半透明使网格透出，体现了网格位于最底层。</div>
+    </div>
+</main>
+
+<script>
+    // 动态生成外部遮罩层 覆盖 main 外部所有区域的网格线，确保网格只显示在 main 内部
+    // 采用四个独立 fixed 遮罩 (上,下,左,右) 基于 main 元素的边界实时更新位置和尺寸，监听 resize 和 scroll 保证准确。
+    (function() {
+        const mainEl = document.getElementById('appMain');
+        if (!mainEl) return;
+        
+        // 创建四个遮罩div，背景色与body相同 (#eef2f5)，层级高于网格低于main内容? 遮罩需要覆盖网格并露出main区域，因此z-index应介于网格和main内容之间
+        // 网格层z-index:1 , 遮罩层设置z-index:2 ，main 内相对定位并且背景透明，内容需要背景色高于遮罩。设置main自身z-index:3 但无定位上下文，可提升内容; 但确保内部子元素背景alpha > 遮罩。
+        const maskTop = document.createElement('div');
+        const maskBottom = document.createElement('div');
+        const maskLeft = document.createElement('div');
+        const maskRight = document.createElement('div');
+        
+        const maskStyle = {
+            position: 'fixed',
+            backgroundColor: '#eef2f5',   // 与body背景严格一致
+            pointerEvents: 'none',
+            zIndex: '2',                  // 高于网格(z-index:1) 且低于main内容(main内背景白色半透明因层叠上下文比遮罩高)
+        };
+        
+        Object.assign(maskTop.style, maskStyle);
+        Object.assign(maskBottom.style, maskStyle);
+        Object.assign(maskLeft.style, maskStyle);
+        Object.assign(maskRight.style, maskStyle);
+        
+        document.body.appendChild(maskTop);
+        document.body.appendChild(maskBottom);
+        document.body.appendChild(maskLeft);
+        document.body.appendChild(maskRight);
+        
+        function updateMasks() {
+            const rect = mainEl.getBoundingClientRect();
+            const viewWidth = window.innerWidth;
+            const viewHeight = window.innerHeight;
+            
+            // 上遮罩: 从视口顶部到main顶部
+            maskTop.style.top = '0px';
+            maskTop.style.left = '0px';
+            maskTop.style.width = viewWidth + 'px';
+            maskTop.style.height = Math.max(0, rect.top) + 'px';
+            
+            // 下遮罩: 从main底部到视口底部
+            maskBottom.style.top = (rect.bottom) + 'px';
+            maskBottom.style.left = '0px';
+            maskBottom.style.width = viewWidth + 'px';
+            maskBottom.style.height = Math.max(0, viewHeight - rect.bottom) + 'px';
+            
+            // 左遮罩: 从main左边沿左侧区域(高度避开上下遮罩重叠无关紧要)
+            maskLeft.style.top = rect.top + 'px';
+            maskLeft.style.left = '0px';
+            maskLeft.style.width = Math.max(0, rect.left) + 'px';
+            maskLeft.style.height = (rect.height) + 'px';
+            
+            // 右遮罩
+            maskRight.style.top = rect.top + 'px';
+            maskRight.style.left = (rect.right) + 'px';
+            maskRight.style.width = Math.max(0, viewWidth - rect.right) + 'px';
+            maskRight.style.height = (rect.height) + 'px';
+        }
+        
+        // 初始更新以及监听滚动、窗口尺寸变化
+        updateMasks();
+        window.addEventListener('scroll', updateMasks);
+        window.addEventListener('resize', updateMasks);
+        // 监听任何可能导致布局偏移的情况(字体加载等)
+        const observer = new ResizeObserver(() => updateMasks());
+        observer.observe(mainEl);
+        observer.observe(document.body);
+    })();
+</script>
+</body>
+</html>

@@ -1,12 +1,13 @@
 ---
 name: 申请友链
-about: 和liaoxyucm.top做友链交换
+about: 和liaoxyucm.top交换友链
 title: "[FREQ] "
 labels: sitesupport
 assignees: ''
 ---
 
-<!-- 请将下面的内容填好, 带*是必填的, 否则友链申请将不会通过. -->
+<!-- 请将下面的内容填好, 带*是必填的, 否则友链申请将不会通过 (网站内容违法也不会通过). -->
+<!-- 若要反馈问题或提出建议请选择blank issue -->
 
 - 标题\*: [e.g. The Example Domain]
 - 链接\*: [e.g. https://example.com]

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Starter-v3lite-l4 | LiaoxyuCM</title>
+	<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+</head>
+<body>
+	<style>
+		@import url("https://fonts.loli.net/css?family=Poppins&display=swap");
+		* {
+			font-family: "Poppins", sans-serif;
+			color: #eee;
+		}
+
+		body {
+			background-color: #121212;
+			-ms-overflow-style: none;
+		}
+		body::-webkit-scrollbar {
+			display: none;
+		}
+		main {
+			display: flex;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			flex-direction: column;
+			align-items: center;
+		}
+
+		.divition {
+			position: relative;
+			display: inline-block;
+		}
+		.divition::before {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			height: 2px;
+			background-color: #fff;
+			transform: scaleX(0);
+			transform-origin: left;
+			transition: transform 0.3s ease-in-out;
+			z-index: 300;
+		}
+		.divition:focus-within::before {
+			transform: scaleX(1);
+		}
+
+		.eng-c {
+			outline: none!important;
+			border: none;
+			border-bottom: 2px solid #999;
+			padding: 5px;
+			width: 800px;
+			height: 25px;
+			background-color: #121212;
+			transition: .3s all ease-in-out;
+		}
+		.eng-c::placeholder {
+			transition: .3s all ease-in-out;
+		}
+		.eng-c:hover::placeholder,
+		.eng-c:focus::placeholder {
+			letter-spacing: 1.5px;
+		}
+
+		@media (max-width:880px){ .eng-c {width: 500px} }
+		@media (max-width:550px){ .eng-c {width: 300px} }
+		@media (max-width:330px){ .eng-c {width: 200px} }
+		@media (max-width:220px){ .eng-c {width: 100px} }
+		@media (max-width:110px){ .eng-c {width:  50px} }
+	</style>
+	<main>
+		<div class="divition">
+			<input type="text" name="q" class="eng-c" autocomplete="off" placeholder="请打开JavaScript，否则起始页没有任何作用" autofocus/>
+		</div>
+	</main>
+	<script>
+		// Focus input bar
+		const $text = document.querySelector(".eng-c");
+
+		// Setup placeholder
+		$text.placeholder = "搜索...";
+
+		// Handle search
+		$text.addEventListener('keydown', (event) => {
+			if (event.key === 'Enter' || event.keyCode === 13) {
+				let query = encodeURIComponent($text.value.trim()) || (window.innerWidth > 550 ? encodeURIComponent(rawHitokoto) : "");
+				window.open(`https://bing.com/?q=${query}`, "_blank");
+				$text.value = "";
+			}
+		});
+	</script>
+</body>
+</html>
