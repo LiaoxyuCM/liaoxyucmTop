@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ssdot-highlightor</title>
+	<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #181825;
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #1e1e2e;
+            border-radius: 16px;
+            padding: 15px 14px 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 6px 12px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+        }
+
+        .input-wrapper {
+            position: relative;
+            width: 100%;
+            border-radius: 12px;
+            background: #1e1e2e;
+            border: 2px solid #313244;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+
+        .input-wrapper:focus-within {
+            border-color: #45475a;
+            box-shadow: 0 4px 16px rgba(59, 130, 246, 0.15);
+        }
+
+        /* 底层高亮显示区 —— 完全覆盖在 textarea 之下 */
+        .highlight-backing {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 16px 20px;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            font-family: 'Menlo', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            pointer-events: none;          /* 让鼠标事件穿透，完全由 textarea 接管 */
+            background: transparent;
+            color: #cdd6f4;                /* 默认文字颜色 (会被高亮覆盖) */
+            border-radius: 24px;
+            overflow: hidden;
+            z-index: 1;
+			font-variant-ligatures: none;
+        }
+
+        /* 高亮内容中的各个 token 通过 span 着色 */
+        .highlight-backing .hl-slash {
+            color: #9399b2;
+        }
+        .highlight-backing .hl-backslash {
+            color: #74c7ec;
+        }
+        .highlight-backing .hl-dot {
+            color: #a6e3a1;
+        }
+        .highlight-backing .hl-plain {
+            color: #cdd6f4;
+        }
+        .highlight-backing .hl-error {
+            border-bottom: 2px solid #f38ba8;
+        }
+        .highlight-backing .hl-unused {
+            color: #6c7086;
+            border-bottom: 2px solid #f9e2af;
+        }
+        .highlight-backing .hl-unused .hl-slash:not(.hl-error) {
+            border-bottom: 2px solid #1e1e2e;
+        }
+
+        /* 真正可编辑的 textarea —— 透明背景，置于上层 */
+        #editor {
+            position: relative;
+            width: 100%;
+            min-height: 240px;
+            padding: 16px 20px;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            font-family: 'Menlo', monospace;
+            background: transparent;        /* 完全透明，露出底层高亮 */
+            color: transparent;            /* 文字透明，只显示光标和选区 */
+            caret-color: #cdd6f4;          /* 光标可见深色 */
+            border: none;
+            outline: none;
+            resize: vertical;
+            border-radius: 12px;
+            z-index: 2;
+            box-shadow: none;
+            tab-size: 2;
+			font-variant-ligatures: none;
+        }
+
+        #editor::selection {
+            background: #f2cdcd50;           /* 选中背景半透明，不影响高亮 */
+            color: transparent;
+        }
+        #editor::placeholder {
+            color: #45475a;
+        }
+
+        /* 占位符样式 —— 因为文字透明，需要单独伪类 */
+        #editor:empty::before {
+            content: "Type sth.";
+            color: #585b70;
+        }
+
+        #editor:focus {
+            box-shadow: none;
+        }
+
+        @media (max-width: 500px) {
+            .container { padding: 20px 16px; }
+            #editor { min-height: 180px; padding: 14px 16px; font-size: 1rem; }
+            .highlight-backing { padding: 14px 16px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="input-wrapper">
+        <!-- 底层高亮容器 (只负责显示着色后的 HTML ) -->
+        <div class="highlight-backing" id="highlightBacking"></div>
+
+        <!-- 真正的输入框 (透明文字, 只显示光标/选区) -->
+        <textarea id="editor" spellcheck="false" placeholder="Paste your code when you're ready"></textarea>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const editor = document.getElementById('editor');
+        const highlightBacking = document.getElementById('highlightBacking');
+
+        // 核心: 将纯文本转换为带高亮 span 的 HTML
+        function highlightText(text) {
+            if (!text) {
+                return '<span class="hl-plain">&nbsp;</span>'; // 占位防止空白坍塌
+            }
+
+            // 1. 先处理反斜杠 \ (红色) —— 注意转义
+            //    用临时占位符保护已经被替换的部分，防止重复处理
+            //    方法: 使用零宽占位 + 分割，但更稳健：逐字符扫描构建。
+            //    为了清晰且避免复杂状态机，采用正则 + 替换 但需防止交叉影响。
+            //    顺序: 先处理 /.../  (因为斜杠对可能包含反斜杠或点, 但内部保持原样)
+            //    但根据需求： /xxxxxx/ 整个灰色，内部任何字符都保持灰色，不单独着色。
+            //    所以先提取斜杠对，将其替换为特殊标记，再处理其余部分的反斜杠和点。
+            //    最后还原斜杠对。
+
+            // 使用不可见字符作为占位符 (保证不会与用户输入冲突)
+            const PLACEHOLDER_SLASH = '\uE000';   // 私有区
+            const PLACEHOLDER_BACKSLASH = '\uE001';
+            const PLACEHOLDER_DOT = '\uE002';
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;')
+                      .replace(/</g, '&lt;')
+                      .replace(/>/g, '&gt;')
+                      .replace(/"/g, '&quot;')
+                      .replace(/'/g, '&#039;');
+        }
+            let resultHtml = '';
+            let segment = '';
+			let stat = 0;
+            let resid = "";
+			editor.value.split("").forEach(ch => {
+				switch (ch) {
+					case ".":
+						if (stat == 0) {
+							segment += resid + "\n";
+							resid = "";
+						} else if (stat == 1) {
+							resid += ".";
+							stat = 0
+						}
+						break
+					case "/":
+						if (stat == 0) {
+							stat = 2
+						} else if (stat == 1) {
+							stat = 0
+							resid += "/";
+						} else if (stat == 2) {
+							stat = 0
+						}
+						break
+					case "\\":
+						if (stat == 0) {
+							stat = 1
+						} else if (stat == 1) {
+							stat = 0
+							resid += "\\";
+						}
+						break
+                    case "\n":
+						if (stat == 0) {
+							resid += "\n";
+						}
+						break
+					default:
+						if (stat != 2) {
+							resid += escapeHtml(ch);
+							if (stat == 1) {
+								stat = 0
+							}
+						}
+
+				}
+			})
+
+			resultHtml += `<span class="hl-plain">${segment}</span>`;
+
+            // 如果结果为空，插入一个空格占位
+            if (resultHtml === '') {
+                resultHtml = '<span class="hl-plain">&nbsp;</span>';
+            }
+
+            return resultHtml;
+        }
+
+        // 简单的 HTML 转义 (防止 XSS)
+
+        // 更新高亮显示
+        function updateHighlight() {
+            const text = editor.value;
+            const highlightedHtml = highlightText(text);
+            highlightBacking.innerHTML = highlightedHtml;
+
+            // 同步滚动 (使得高亮背景与 textarea 滚动一致)
+            // 由于 textarea 和高亮层都是 relative 且独立滚动，需要同步 scrollTop
+            // 但 .input-wrapper 不滚动，textarea 滚动，高亮背景需要跟随
+            // 注意: textarea 的滚动会带动高亮背景？因为高亮背景是绝对定位，不自动跟随滚动
+            // 因此需要将高亮背景的 scrollTop 与 textarea 同步
+            highlightBacking.scrollTop = editor.scrollTop;
+            highlightBacking.scrollLeft = editor.scrollLeft;
+        }
+
+        // 监听 input 事件 (实时)
+        editor.addEventListener('input', updateHighlight);
+
+        // 监听滚动同步 (当 textarea 滚动时，高亮背景跟随)
+        editor.addEventListener('scroll', function() {
+            highlightBacking.scrollTop = editor.scrollTop;
+            highlightBacking.scrollLeft = editor.scrollLeft;
+        });
+
+        // 初始高亮 (如果 textarea 有预置内容)
+        // 设置初始示例文本 (让用户看到效果)
+        editor.value = 'Type sth.';
+        updateHighlight();
+
+        // 当窗口改变或字体加载后保持对齐
+        window.addEventListener('resize', updateHighlight);
+
+        // 额外: 确保粘贴等操作后高亮更新
+        editor.addEventListener('paste', function() {
+            // 微任务确保值已更新
+            setTimeout(updateHighlight, 0);
+        });
+
+        // 兼容性: 在内容改变后同步滚动 (某些情况)
+        editor.addEventListener('change', updateHighlight);
+
+        // 挂载到全局便于调试 (非必须)
+        window.__updateHighlight = updateHighlight;
+    })();
+</script>
+
+</body>
+</html>

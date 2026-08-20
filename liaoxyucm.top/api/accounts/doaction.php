@@ -292,7 +292,55 @@ switch ($action) {
             echo json_encode(array("status" => 1, "message" => "转账失败"));
         }
         break;
+    case 'connect_to_t8000x': // 好像没用
+        $url = "https://t8000x.top/api/login";  // 如果是 HTTPS
+// $url = "http://t8000x.top/api/login"; // 如果是 HTTP
+
+        $datat = [
+            'username' => $_POST['t8000x_username'],
+            'password' => $_POST['t8000x_password']
+        ];
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($datat));  // JSON 格式
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'Content-Length: ' . strlen(json_encode($datat))
+        ]);
         
+// HTTPS 证书验证（生产环境建议开启）
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+  
+          $response = curl_exec($ch);
+        curl_close($ch);
+          
+          if (json_decode($response, true)["success"]) {
+             $data['users'][$username]['t8000xuser'] = $datat["username"];
+             if (saveUserData($filepath, $data)) {
+                    echo json_encode(array(
+                        "status" => 0, 
+                        "message" => "授权成功",
+                        "username" => $datat["username"]
+                    ));
+             } else {
+                 echo json_encode(array(
+                    "status" => 1, 
+                    "message" => "授权失败"
+                 ));
+             }
+          } else {
+              echo json_encode(array(
+                  "status" => 1, 
+                  "message" => "授权失败"
+              ));
+          }
+    
+        break;
     case 'get_user_info':
         // 获取用户信息（不需要修改数据）
         echo json_encode(array(

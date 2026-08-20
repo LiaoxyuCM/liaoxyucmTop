@@ -18,6 +18,4 @@ document.addEventListener("DOMContentLoaded", () => {
 	register("readmore_jisgreen", "", "https://jisgreen-encryption{$rthSuffix}", "Read More");
 	register("yybh_link", " a", "https://yybh{$rthSuffix}", "JiShi Tech (Ran Away)");
 	register("zh_link", " a", "https://zhkj.vvvv.ee", "ZH Tech");
-	register("chatgroup", " a", "https://qm.qq.com/q/xbiNvnya4", "Click here to join my chatgroup");
-
 });

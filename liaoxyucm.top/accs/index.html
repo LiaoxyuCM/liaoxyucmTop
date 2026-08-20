@@ -197,6 +197,10 @@
                 <label>密码</label>
                 <input type="password" id="loginPassword" placeholder="请输入密码">
             </div>
+			<select id="loginMethod">
+				<option value="this">本账号系统</option>
+				<option value="t8000x">t8000x(请先授权)</option>
+			</select>
             <button id="loginBtn">登录 / 进入系统</button>
             <button id="registerBtn">注册</button>
         </div>
@@ -263,6 +267,12 @@
                     </div>
                     <button id="transferBtn" style="margin-top: 8px;">转出积分</button>
                 </div>
+                <!-- <div class="t8000x-connect">
+                    <label>T8000X账号授权</label>
+                    <input type="text" id="t8000xUsername" placeholder="账号" maxlength="25">
+                    <input type="password" id="t8000xPassword" placeholder="密码" maxlength="25">
+                    <button id="t8000xConnectBtn" style="margin-top: 8px;">授权</button>
+                </div> -->
 
                 <hr>
 				<p id="shareLink"></p>
@@ -648,6 +658,19 @@ function getLevelByPoints(points) {
             showMessage('actionMessage', `转账成功，已转出 ${points} 积分`, false);
         }
     });
+	document.getElementById("t8000xConnectBtn")?.addEventListener('click', async () => {
+		const username = document.getElementById("t8000xUsername").value || "";
+		const password = document.getElementById("t8000xPassword").value || "";
+
+        const res = await callAction('connect_to_t8000x', { t8000x_username: username, t8000x_password: password });
+        if (res && res.status === 0) {
+            showMessage('actionMessage', "授权成功", false);
+        } else {
+			
+            showMessage('actionMessage', "授权失败", true);
+		}
+
+	});
     
     document.getElementById('logoutBtn')?.addEventListener('click', () => {
         logout();

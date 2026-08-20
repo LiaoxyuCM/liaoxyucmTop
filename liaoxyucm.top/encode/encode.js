@@ -1,37 +1,37 @@
 const jisgreen_encryption_type = {
-	"encryption": {
-		"JisGreen": ["JisGren", "JisGreen", "JisGreeen"],
-		"JiShi": ["JiSi", "JiShi", "JiShhi"],
-		"JisKotlin": ["JisKotin", "JisKotlin", "JisKootlin"],
-		"JisMua": ["JisMa", "JisMua", "JisMuua"],
-		"ExcuseBox": ["ExcuseBx", "ExcuseBox", "ExcuseBoox"],
-		"Xxx": ["Xx", "Xxx", "Xxxx"],
-		"YYBH": ["YBH", "YYBH", "YYYBH"],
-		"LTFH": ["LTF", "LTFH", "LTFHH"],
-		"BJWX": ["BJW", "BJWX", "BJWXX"],
-		"JisRmb": ["JisRb", "JisRmb", "JisRmmb"],
-		"JisBo": ["JisB", "JisBo", "JisBoo"],
-		"JisW": ["Jis", "JisW", "JisWw"],
-		"JisSkyline": ["JisSkylne", "JisSkyline", "JisSkyliine"],
-		"Reallove": ["Realove", "Reallove", "Realllove"],
-		"N1010": ["0", "1", "."]
+	encryption: {
+		JisGreen: ["JisGren", "JisGreen", "JisGreeen"],
+		JiShi: ["JiSi", "JiShi", "JiShhi"],
+		JisKotlin: ["JisKotin", "JisKotlin", "JisKootlin"],
+		JisMua: ["JisMa", "JisMua", "JisMuua"],
+		ExcuseBox: ["ExcuseBx", "ExcuseBox", "ExcuseBoox"],
+		Xxx: ["Xx", "Xxx", "Xxxx"],
+		YYBH: ["YBH", "YYBH", "YYYBH"],
+		LTFH: ["LTF", "LTFH", "LTFHH"],
+		BJWX: ["BJW", "BJWX", "BJWXX"],
+		JisRmb: ["JisRb", "JisRmb", "JisRmmb"],
+		JisBo: ["JisB", "JisBo", "JisBoo"],
+		JisW: ["Jis", "JisW", "JisWw"],
+		JisSkyline: ["JisSkylne", "JisSkyline", "JisSkyliine"],
+		Reallove: ["Realove", "Reallove", "Realllove"],
+		N1010: ["0", "1", "."]
 	},
-	"decryption": {
-		"JisGreen": [/JisGren/g, /JisGreen/g, /JisGreeen/g],
-		"JiShi": [/JiSi/g, /JiShi/g, /JiShhi/g],
-		"JisKotlin": [/JisKotin/g, /JisKotlin/g, /JisKootlin/g],
-		"JisMua": [/JisMa/g, /JisMua/g, /JisMuua/g],
-		"ExcuseBox": [/ExcuseBx/g, /ExcuseBox/g, /ExcuseBoox/g],
-		"Xxx": [/Xx/g, /Xxx/g, /Xxxx/g],
-		"YYBH": [/YBH/g, /YYBH/g, /YYYBH/g],
-		"LTFH": [/LTF/g, /LTFH/g, /LTFHH/g],
-		"BJWX": [/BJW/g, /BJWX/g, /BJWXX/g],
-		"JisRmb": [/JisRb/g, /JisRmb/g, /JisRmmb/g],
-		"JisBo": [/JisB/g, /JisBo/g, /JisBoo/g],
-		"JisW": [/Jis/g, /JisW/g, /JisWw/g],
-		"JisSkyline": [/JisSkylne/g, /JisSkyline/g, /JisSkyliine/g],
-		"Reallove": [/Realove/g, /Reallove/g, /Realllove/g],
-		"N1010": [/0/g, /1/g, /\./g]
+	decryption: {
+		JisGreen: [/JisGren/g, /JisGreen/g, /JisGreeen/g],
+		JiShi: [/JiSi/g, /JiShi/g, /JiShhi/g],
+		JisKotlin: [/JisKotin/g, /JisKotlin/g, /JisKootlin/g],
+		JisMua: [/JisMa/g, /JisMua/g, /JisMuua/g],
+		ExcuseBox: [/ExcuseBx/g, /ExcuseBox/g, /ExcuseBoox/g],
+		Xxx: [/Xx/g, /Xxx/g, /Xxxx/g],
+		YYBH: [/YBH/g, /YYBH/g, /YYYBH/g],
+		LTFH: [/LTF/g, /LTFH/g, /LTFHH/g],
+		BJWX: [/BJW/g, /BJWX/g, /BJWXX/g],
+		JisRmb: [/JisRb/g, /JisRmb/g, /JisRmmb/g],
+		JisBo: [/JisB/g, /JisBo/g, /JisBoo/g],
+		JisW: [/Jis/g, /JisW/g, /JisWw/g],
+		JisSkyline: [/JisSkylne/g, /JisSkyline/g, /JisSkyliine/g],
+		Reallove: [/Realove/g, /Reallove/g, /Realllove/g],
+		N1010: [/0/g, /1/g, /\./g]
 	}
 }
 
@@ -41,12 +41,12 @@ const jisgreen_encrypt = (original_text, type = "JisGreen") => {
 	for (let i of original_text){
 		l += i.charCodeAt(0).toString(2) + " "
 	}
-	l =  l.replace(/ /g, jisgreen_encryption_type["encryption"][type][2]).replace(/1/g, jisgreen_encryption_type["encryption"][type][1]).replace(/0/g, jisgreen_encryption_type["encryption"][type][0])
+	l =  l.replace(/ /g, jisgreen_encryption_type.encryption[type][2]).replace(/1/g, jisgreen_encryption_type.encryption[type][1]).replace(/0/g, jisgreen_encryption_type.encryption[type][0])
 	return l
 }
 
 const jisgreen_decrypt = (original_text, type = "JisGreen") => {
-	let l = original_text.replace(jisgreen_encryption_type["decryption"][type][2], " ").replace(jisgreen_encryption_type["decryption"][type][1], "1").replace(jisgreen_encryption_type["decryption"][type][0], "0").slice(0, -1)
+	let l = original_text.replace(jisgreen_encryption_type.decryption[type][2], " ").replace(jisgreen_encryption_type.decryption[type][1], "1").replace(jisgreen_encryption_type.decryption[type][0], "0").slice(0, -1)
 
 	j = l.split(" ")
 
@@ -77,7 +77,7 @@ const jis2_encrypt = (original_text, zero_width_required = true) => {
 	const raw = original_text;
 	const b64 = utf8ToBase64(raw);
 	const rev = b64.split('').reverse().join('');
-	const part1 = zero_width_required ? insertBetween('[JIS2]' ) : "[JIS2]";
+	const part1 = zero_width_required ? insertBetween('[JIS2]') : "[JIS2]";
 	const part2 = zero_width_required ? insertBetween('abcdefghijklmnopqrstuvwxyz') : 'abcdefghijklmnopqrstuvwxyz';
 	const part3 = zero_width_required ? insertBetween('@jisgreen#kotlinbox') : '@jisgreen#kotlinbox';
 	let out = part1+(zero_width_required ? insertBetween(rev) : rev)+part2+part3;
@@ -128,7 +128,6 @@ function getHashFunc(hashmethod) {
 		const msg = new TextEncoder().encode(s);
 		const hash = await crypto.subtle.digest(hashmethod, msg);
 		return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-
 	}
 }
 
@@ -164,6 +163,25 @@ function decodeBase16(hex) {
 		bytes[i/2] = parseInt(hex.substring(i, i+2), 16);
 	}
 	return new TextDecoder().decode(bytes);
+}
+
+function encodeUnicode(str) {
+    const strsplit = [];
+    for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i);
+        strsplit.push('\\u' + char.toString(16).padStart(4, '0'));
+    }
+    return strsplit.join('');
+}
+
+function decodeUnicode(str) {
+    try {
+        return str.replace(/\\u([0-9a-fA-F]{4})/g, (_, hex) => {
+          return String.fromCharCode(parseInt(hex, 16));
+        });
+    } catch (e) {
+        return "无效数据";
+    }
 }
 
 let lvqichonglist = ["吕","齐","冲","其"]
@@ -248,74 +266,79 @@ function cardUnshuffle(s) {
 }
 
 let bchoo = { //这名字乱起的哈哈
-	"b64": {
-		"en": utf8ToBase64,
-		"de": base64ToUtf8,
-		"is_hash": false
+	b64: {
+		en: utf8ToBase64,
+		de: base64ToUtf8,
+		is_hash: false
 	},
-	"b16": {
-		"en": encodeBase16,
-		"de": decodeBase16,
-		"is_hash": false
+	b16: {
+		en: encodeBase16,
+		de: decodeBase16,
+		is_hash: false
 	},
-	"url": {
-		"en": urlEnc,
-		"de": urlDec,
-		"is_hash": false
+	url: {
+		en: urlEnc,
+		de: urlDec,
+		is_hash: false
 	},
-	"sha1": {
-		"en": getHashFunc("SHA-1"),
-		"de": (_) => {return "哈希无法被解密"},
-		"is_hash": true
+	dataurl: {
+		en: (g) => {return "data:text/plain;base64," + utf8ToBase64(g)},
+		de: decodeDataUrl,
+		is_hash: false
 	},
-	"sha256": {
-		"en": getHashFunc("SHA-256"),
-		"de": (_) => {return "哈希无法被解密"},
-		"is_hash": true
+	unicode: {
+		en: encodeUnicode,
+		de: decodeUnicode,
+		is_hash: false
 	},
-	"sha512": {
-		"en": getHashFunc("SHA-512"),
-		"de": (_) => {return "哈希无法被解密"},
-		"is_hash": true
+	sha1: {
+		en: getHashFunc("SHA-1"),
+		de: (_) => "哈希无法被解密",
+		is_hash: true
 	},
-	"off": {
-		"en": offsetEncrypt,
-		"de": offsetDecrypt,
-		"is_hash": false
+	sha256: {
+		en: getHashFunc("SHA-256"),
+		de: (_) => "哈希无法被解密",
+		is_hash: true
 	},
-	"jge": {
-		"en": jisgreen_encrypt,
-		"de": jisgreen_decrypt,
-		"is_hash": false,
-		"custom_text": "JGE, JisGreen Encryption 是2025年11月的项目，现已停更。\n该加密效果不理想，密文长度甚至比明文长度高出52~137倍\n变体JisSkyline是66~171倍"
+	sha512: {
+		en: getHashFunc("SHA-512"),
+		de: (_) => "哈希无法被解密",
+		is_hash: true
 	},
-	"jis2": {
-		"en": jis2_encrypt,
-		"de": jis2_decrypt,
-		"is_hash": false,
-		"custom_text": "此为纪青（陈青陌）在开发KotlinBox时自创的加密算法，请支持他\n庆幸的是，我还有JIS2加密实现的留档"
+	off: {
+		en: offsetEncrypt,
+		de: offsetDecrypt,
+		is_hash: false
 	},
-	"lvqichong": {
-		"en": lvQiChongEncode,
-		"de": lvQiChongDecode,
-		"is_hash": false,
-		"custom_text": "吕齐冲是我们班的同学，而吕齐冲加解密是自创的Base16的变体"
+	jge: {
+		en: jisgreen_encrypt,
+		de: jisgreen_decrypt,
+		is_hash: false,
+		custom_text: "JGE, JisGreen Encryption 是2025年11月的项目，现已停更。\n该加密效果不理想，密文长度甚至比明文长度高出52~137倍\n变体JisSkyline是66~171倍\n体验完整版 (老古董页面, 若页面已被删除请到本站的gh备份仓库里找): https://liaoxyucm{$rthSuffix}/JisGreenEncryption/"
 	},
-	"reverse": {
-		"en": reverseStr,
-		"de": reverseStr,
-		"is_hash": false
+	jis2: {
+		en: jis2_encrypt,
+		de: jis2_decrypt,
+		is_hash: false,
+		custom_text: "此为纪青在开发KotlinBox时自创的加密算法，请支持他\n庆幸的是，我还有JIS2加密实现的留档"
 	},
-	"cardshuffle": {
-		"en": cardShuffle,
-		"de": cardUnshuffle,
-		"is_hash": false,
-		"custom_text": "原文内容数量过小或字符种数过少，效果就不理想\n该加密适用于代码和文章"
+	lvqichong: {
+		en: lvQiChongEncode,
+		de: lvQiChongDecode,
+		is_hash: false,
+		custom_text: "吕齐冲是我们班的同学，而吕齐冲加解密是自创的Base16的变体"
 	},
-	"dataurl": {
-		"en": (g) => {return "data:text/plain;base64," + utf8ToBase64(g)},
-		"de": decodeDataUrl,
-		"is_hash": false
+	reverse: {
+		en: reverseStr,
+		de: reverseStr,
+		is_hash: false
+	},
+	cardshuffle: {
+		en: cardShuffle,
+		de: cardUnshuffle,
+		is_hash: false,
+		custom_text: "原文内容数量过小或字符种数过少，效果就不理想\n该加密适用于代码和文章"
 	}
 }
 
@@ -325,25 +348,32 @@ function isAsyncFunction(fn) {
 
 let setmethod = "b64";
 
-function method(mtd) {
+function method(mtd, thisElem) {
 	setmethod = mtd;
-	document.querySelectorAll(".method").forEach(e => e.classList.remove("selected"));
-	document.querySelector(`.mtd-${mtd}`).classList.add("selected");
-	document.querySelector(".output").placeholder = bchoo[mtd]["custom_text"] ? bchoo[mtd]["custom_text"] : (bchoo[mtd]["is_hash"] ? "注意：此为哈希散列，无法被解密" : "结果将显示在这里" )
+	document.querySelector(".method.selected").classList.remove("selected");
+	thisElem.classList.add("selected");
+	document.querySelector(".output").placeholder = bchoo[mtd].custom_text || (bchoo[mtd].is_hash ? "注意：此为哈希散列，无法被解密" : "结果将显示在这里" )
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-	const encrypt = document.querySelector(".encrypt")
-	const decrypt = document.querySelector(".decrypt")
+	const encode = document.querySelector(".encode")
+	const decode = document.querySelector(".decode")
 	const copy_result = document.querySelector(".copy_rs")
 	const clearall = document.querySelector(".clear")
 	const switcher = document.querySelector(".switch")
 	const inputElem = document.querySelector(".input")
 	const output = document.querySelector(".output")
+	const methods = document.querySelectorAll(".method")
 
-	encrypt.addEventListener("click", async () => {
+	methods.forEach((mtd) => {
+		mtd.addEventListener("click", () => {
+			method(mtd.dataset.algo, mtd)
+		})
+	})
+
+	encode.addEventListener("click", async () => {
 		const input = inputElem.value
-		const cf = bchoo[setmethod]["en"]
+		const cf = bchoo[setmethod].en
 		if (cf) {
 			let l = isAsyncFunction(cf) ? await cf(input) : cf(input)
 			output.value = l
@@ -353,16 +383,15 @@ document.addEventListener("DOMContentLoaded", () => {
 	})
 
 
-	decrypt.addEventListener("click", async () => {
+	decode.addEventListener("click", async () => {
 		const input = inputElem.value
-		const cf = bchoo[setmethod]["de"]
+		const cf = bchoo[setmethod].de
 		if (cf) {
 			let l = isAsyncFunction(cf) ? await cf(input) : cf(input)
 			output.value = l
 		} else {
 			output.value = "无效方式"
-		}
-		
+		}		
 	})
 	
 	copy_result.addEventListener("click", async () => {
@@ -371,7 +400,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	switcher.addEventListener("click", async () => {
 		const inputval = inputElem.value;
-		inputElem.value = document.querySelector(".output").value;
+		inputElem.value = output.value;
 		output.value = inputval;
 	})
 	clearall.addEventListener("click", async () => {
