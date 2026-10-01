@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+	console.warn("[DEPRECATED] You'd better use https://newsite.liaoxyucm.top/style.css instead");
 	console.log(`
 感谢支持LiaoxyuCM
  _     _                              ____ __  __

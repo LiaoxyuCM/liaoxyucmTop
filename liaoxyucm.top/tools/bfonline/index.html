@@ -6,8 +6,8 @@
 		<link rel="stylesheet" href="https://newsite.liaoxyucm.top/style.css">
 		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-		<script src="/unwasting/module.js"></script>
-		<title>Unwasting | LiaoxyuCM</title>
+		<script src="/bfonline/bf.js"></script>
+		<title>Bfonline | LiaoxyuCM</title>
 	</head>
 	<body>
 		<nav>
@@ -19,23 +19,21 @@
 		</nav>
 		<main>
 			<noscript>
-				<h3>Unwasting无法运作 因为你没打开JavaScript</h3>
+				<h3>BFEX无法运作 因为你没打开JavaScript</h3>
 			</noscript>
-			<textarea placeholder="输入文本" id="input"></textarea>
-			<label for="uniquers">
-				<p>
-					<input type="checkbox" id="uniquers" checked />
-					自动初始化
-				</p>
-			</label>
+			<textarea placeholder="代码" id="i_code"></textarea>
+			<textarea placeholder="输入数据" id="i_data" style="height:100px"></textarea>
+			<select id="processor">
+				<option value="donothing">不使用预处理器</option>
+				<option value="macro_comment_process">宏和注释预处理器(beta)</option>
+			</select>
 			<div style="display: flex">
 				<div class="buttongroup" style="flex: 1">
-					<button class="go">编译成wastelang</button>
+					<button class="go">开始</button>
 					<button class="copyrs">复制结果</button>
 				</div>
-				<p>结果=<span class="restat_len">0</span>ch, 原文本/结果&approxeq;<span class="restat_dv">undef</span></p>
 			</div>
-			<textarea placeholder="结果将显示在这里&#10;新版Unwasting编译结果的长度 比 初版的 压缩了大约10%&#10;但由于代码稳定性, 编译器舍去了众多WasteLang的功能, 从而编译后的文本不是最短的 (虽然我们已做到尽可能短)" id="output" style="word-break:break-all;line-break:anywhere" readonly></textarea>
+			<textarea placeholder="结果将显示在这里" id="output" readonly></textarea>
 		</main>
 		<section class="footer">
 			<p>&copy; LiaoxyuCM × FrontMeteor 2024-2026</p>
@@ -43,9 +41,9 @@
 		<script>
 			const output = $('#output');
 			$(".go").on("click", () => {
-				output.val(unwaste_compile($("#input").val(), $("#uniquers").checked));
-				$(".restat_len").text(output.val().length);
-				$(".restat_dv").text(Math.floor(output.val().length / $("#input").val().length * 100) / 100);
+				const [success, value] = bf_compile($("#i_code").val(), $("#i_data").val(), processor[$("#processor").val()]);
+				output.val(value);
+				output.css({color: success?"":"#f00"});
 			})
 
 			$(".copyrs").on("click", async () => {

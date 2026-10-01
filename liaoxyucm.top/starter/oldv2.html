@@ -4,12 +4,12 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Starter-v2 | Archive</title>
-		<link rel="stylesheet" href="https://assets.liaoxyucm.top/style.css">
+		<link rel="stylesheet" href="https://assets.liaoxyucm.top/style_old2.css">
 		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
 		<script src="https://assets.liaoxyucm.top/global.js"></script>
 	</head>
 	<body>
-		<mainpage>
+		<main>
 			<noscript>
 				<h1 style="margin:4px;color:#f22">请将JavaScript打开谢谢</h1>
 			</noscript>
@@ -66,7 +66,7 @@
 			<section verbose class="footer">
 				<p>&copy; LiaoxyuCM 2024-2026</p>
 			</section>
-		</mainpage>
+		</main>
 		<script>
 			function getQueryParam(name){
 				const params = new URLSearchParams(window.location.search);
@@ -159,8 +159,7 @@
 				const parentz = document.querySelector(".pare .histories");
 				const latestchild = parentz.firstChild;
 				const historyBase = document.createElement("div");
-				historyBase.className = "history";
-				historyBase.setAttribute("bordered", "");
+				historyBase.className = "history bordered";
 				historyBase.style.marginTop = "5px";
 				historyBase.style.display = "flex";
 				historyBase.style.flexDirection = "row";

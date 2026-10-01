@@ -19,14 +19,14 @@
 	--h1-gradient-right: #2563eb;
 	--footer-bordertop-color: #d1dff0;
 	--footer-text-color: #4b5b6c;
-	--button-bg-color: #d9e2ef;
-	--button-selected-color: #a4c1ff;
-	--hint-err-bg-color: #f5b9b9;
-	--hint-err-fg-color: #c02d2d;
-	--hint-warn-bg-color: #f5efb9;
-	--hint-warn-fg-color: #888a1f;
-	--hint-suc-bg-color: #c0f5b9;
-	--hint-suc-fg-color: #1f8a31;
+    --button-bg-color: #d9e2ef;
+    --button-selected-color: #acc7ff;
+    --hint-err-bg-color: #ffdcdc;
+    --hint-err-fg-color: #b32020;
+    --hint-warn-bg-color: #f7f4d5;
+    --hint-warn-fg-color: #7d6a0d;
+    --hint-suc-bg-color: #d3f3ce;
+    --hint-suc-fg-color: #10530b;
 	--card-border-color: #cbd5e1;
 	--card-shadow-color: rgba(0, 0, 0, 0.02);
 	--card-title-bg-gradient-left: #94a3b8;
@@ -55,14 +55,14 @@
 		--h1-gradient-right: #bbd7fb;
 		--footer-bordertop-color: #334155;
 		--footer-text-color: #94a3b8;
-		--button-bg-color: #2d3b4f;
-		--button-selected-color: #3b82f6;
-		--hint-err-bg-color: #442326;
-		--hint-err-fg-color: #f87171;
-		--hint-warn-bg-color: #444123;
-		--hint-warn-fg-color: #f8ef71;
-		--hint-suc-bg-color: #264423;
-		--hint-suc-fg-color: #71f878;
+    	--button-bg-color: #283343;
+    	--button-selected-color: #2b70e1;
+		--hint-err-bg-color: #291315;
+    	--hint-err-fg-color: #df6d6d;
+    	--hint-warn-bg-color: #353214;
+    	--hint-warn-fg-color: #d7ce4b;
+    	--hint-suc-bg-color: #132b11;
+    	--hint-suc-fg-color: #5acf60;
 		--card-border-color: #2d3b4f;
 		--card-shadow-color: rgba(0, 0, 0, 0.5);
 		--card-title-bg-gradient-left: #475569;
@@ -172,7 +172,7 @@ select {
 	transition: all 0.2s ease;
 	outline: none;
 	
-	background-color: var(--body-link-bg-color);
+	background-color: var(--nav-bg-color);
 	border: 1px solid var(--card-border-color);
 	color: var(--body-text-color);
 	box-shadow: 0 1px 2px var(--card-shadow-color);
@@ -200,7 +200,7 @@ select:focus {
 }
 
 select option {
-	background: var(--body-link-bg-color);
+	background-color: var(--body-bg-color);
 	color: var(--body-text-color);
 	padding: 8px;
 }
@@ -249,7 +249,12 @@ button.selected {
 	background-color: var(--button-selected-color);
 }
 
+.buttongroup {
+	font-size: 0px;
+}
+
 .buttongroup button {
+	font-size: 14px;
 	border-radius: 0px;
 	vertical-align: middle;
 }
@@ -365,6 +370,7 @@ textarea, input {
 	color: var(--body-text-color);
 	border: 1px solid var(--nav-border-color);
 	border-radius: 5px;
+	padding: 4px;
 }
 
 textarea {
@@ -374,7 +380,6 @@ textarea {
 }
 
 input {
-	padding: 8px;
     border: 1px solid var(--card-border-color);
 }
 

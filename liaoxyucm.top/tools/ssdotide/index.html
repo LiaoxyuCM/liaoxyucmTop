@@ -227,15 +227,15 @@
 							unst += "\\"
 						}
 						break
-                    case "\n":
-						if (stat == 0) {
-							resid += "\n";
-						} else if (stat == 1) {
-                            backnew += 1
-						} else if (stat == 2) {
-							unst += "\n"
-						}
-						break
+                    // case "\n":
+					// 	if (stat == 0) {
+					// 		resid += "\n";
+					// 	} else if (stat == 1) {
+                    //         backnew += 1
+					// 	} else if (stat == 2) {
+					// 		unst += "\n"
+					// 	}
+					// 	break
 					default:
 						if (stat == 0) {
 							resid += escapeHtml(ch);

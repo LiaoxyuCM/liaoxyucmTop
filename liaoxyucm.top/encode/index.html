@@ -4,8 +4,10 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="https://newsite.liaoxyucm.top/style.css">
+		<link rel="stylesheet" href="http://assets.liaoxyucm.top/toast/toast.css">
 		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
 		<script src="encode.js"></script>
+		<script src="http://assets.liaoxyucm.top/toast/toast.js"></script>
 		<title>Encoder | LiaoxyuCM</title>
 	</head>
 	<body>
@@ -28,16 +30,18 @@
 				<button class="method" data-algo="unicode">Unicode</button>
 				<button class="method" data-algo="sha1">SHA1</button>
 				<button class="method" data-algo="sha256">SHA256</button>
+				<button class="method" data-algo="sha384">SHA384</button>
 				<button class="method" data-algo="sha512">SHA512</button>
 				<button class="method" data-algo="jge">JGE</button>
 				<button class="method" data-algo="jis2">JIS2</button>
-				<!--<button class="method" data-algo="lvqichong">吕齐冲</button>-->
+				<button class="method" data-algo="you">又双叒叕</button>
 				<button class="method" data-algo="off">偏移（+1）</button>
 				<button class="method" data-algo="reverse">反转</button>
 				<button class="method" data-algo="cardshuffle">洗牌</button>
+				<button class="method" data-algo="card2dshuffle">2维洗牌</button>
 				<a href="rsa"><button>RSA（仅获取公私钥）</button></a>
 			</div>
-			<textarea placeholder="输入文本" class="input"></textarea>
+			<textarea placeholder="输入文本" class="input" name="input"></textarea>
 			<div class="buttongroup">
 				<button class="encode">编码</button>
 				<button class="decode">解码</button>
@@ -45,7 +49,7 @@
 				<button class="copy_rs">复制结果</button>
 				<button class="switch">上下对调</button>
 			</div>
-			<textarea placeholder="结果将显示在这里" class="output" readonly></textarea>
+			<textarea placeholder="结果将显示在这里" class="output" name="output" readonly></textarea>
 			<a href="https://tools.liaoxyucm.top/explore_jge">探究 使用JGE编码文本 长度翻了几倍</a>
 		</main>
         <section class="footer">

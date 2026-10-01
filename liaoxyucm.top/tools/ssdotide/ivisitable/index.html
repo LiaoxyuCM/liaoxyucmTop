@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8">
+	<title>IVisitable</title>
+</head>
+<body>
+	<div class="pare">
+		<div class="section_1">
+			<div></div>
+		</div>
+		<div class="section_2">
+			<button outline class="create-ssdot">创建ssdot实例/New ssdot instance</button>
+		</div>
+	</div>
+	<script>
+class Ssdot{constructor(){this.a="";this.b=0}run(h){let f="";const c={".":[()=>{f+=this.a+"\n";this.a=""},()=>{this.a+=".";this.b=0},()=>{}],"\\":[()=>{this.b=1},()=>{this.a+="\\";this.b=0},()=>{}],"/":[()=>{this.b=2},()=>{this.a+="/";this.b=0},()=>{this.b=0}],g:[(d)=>{this.a+=d},(d)=>{this.a+=d;this.b=0},(_)=>{}]};h.split("").forEach((e)=>{switch(e){case".":case"\\":case"/":c[e][this.b]();break;default:c.g[this.b](e);break}});return f}}
+
+////////////MAIN/////////////
+	var executors = [];
+	var id = 0;
+	function ssdotexec(iden) {
+		const elem = document.querySelector(`div.section_1 div div[data-id='${iden}']`);
+		const code = prompt("输入代码/Enter code");
+		const result = executors[iden].run(code).replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/'/g, "&quot;").replace(/\n/g, "<br>");
+		elem.innerHTML = `
+			<p>Ssdot #${iden}<button onclick="ssdotexec(${iden})">运行/Execute</button><button onclick="deleteitem(${iden})">删除/Delete</button></p>
+			<p>数据/Data:</p>
+			<ul>
+				<li><p>输出/output = ${result}</p></li>
+				<li><p>残留/residue = ${executors[iden].a.replace(/&/g, "&amp;").replace(/>/g, "&gt;").replace(/</g, "&lt;").replace(/'/g, "&quot;").replace(/\n/g, "<br>")}</p></li>
+				<li><p>状态/status = ${executors[iden].b}</p></li>
+			</ul>
+		`;
+	}
+	function deleteitem(iden) {
+		var elem = document.querySelector(`div.section_1 div div[data-id='${iden}']`);
+		var parent = document.querySelector(`div.section_1 div`);
+		parent.removeChild(elem);
+	}
+	document.querySelector(".create-ssdot").addEventListener("click", () => {
+		executors.push(new Ssdot());
+		var elem = document.createElement("div");
+		elem.setAttribute("bordered", "");
+		elem.setAttribute("data-id", id);
+		elem.innerHTML = `
+			<p>Ssdot #${id}<button onclick="ssdotexec(${id})">运行/Execute</button><button onclick="deleteitem(${id})">删除/Delete</button></p>
+			<p>数据/Data:</p>
+			<ul>
+				<li><p>输出/output =</p></li>
+				<li><p>残留/residue =</p></li>
+				<li><p>状态/status = 0</p></li>
+			</ul>
+		`;
+		document.querySelector(".section_1 div").appendChild(elem);
+		id++;
+	});
+	</script>
+	<style>
+		html, body {
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			background-color: #eee
+		}
+		.pare {
+			display: flex;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+		}
+		.section_1 {
+			position: relative;
+			width: 70%;
+			height: 100%;
+			display: block;
+		}
+		.section_1>div {
+			overflow-y: auto;
+		}
+		.section_2 {
+			position: fixed;
+			background-color: #bbb;
+			left: 70%;
+			width: 30%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+		[bordered] {
+			border: 1px solid #111;
+			border-radius: 5px;
+			margin: 6px;
+			word-wrap: break-word;
+		}
+		p {
+			margin: 8px;
+		}
+		button {
+			border: 1px solid #000;
+			border-radius: 3px;
+			margin-left: 5px;
+			transition: .2s all ease-in-out;
+		}
+		button[outline] {
+			margin: 5px;
+			padding: 4px;
+		}
+		button:hover {
+			background-color: #ccc;
+			cursor: pointer;
+		}
+		@media(max-width: 768px) {
+			.pare { flex-direction: column}
+			.section_1 {
+				width: 100%;
+				height: 70%;
+				display: flex;
+				flex-direction: column;
+			}
+			.section_2 {
+				background-color: #bbb;
+				top: 70%;
+				left: 0;
+				width: 100%;
+				height: 30%;
+				display: flex;
+				flex-direction: column;
+			}
+		}
+		@media(prefers-color-scheme: dark) {
+			* { color: #fff }
+			body { background-color: #111; }
+			.section_2 { background-color: #444; }
+			p { color: #fff; }
+			button { border: 1px solid #fff; background-color: #000 }
+			button:hover { background-color: #333; }
+			[bordered] { border: 1px solid #eee; }
+		}
+	</style>
+</body>
+</html>

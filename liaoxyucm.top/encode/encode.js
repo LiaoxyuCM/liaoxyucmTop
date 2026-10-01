@@ -114,14 +114,9 @@ const jis2_decrypt = (encrypted_text) => {
 		const decoded = base64ToUtf8(validBase64);
 		return decoded;
 	} catch (e) {
-		return "JIS2 Syntax Error"
+		throw new Error("JIS2语法错误");
 	}
 };
-
-
-
-function urlEnc(s) { return encodeURIComponent(s); }
-function urlDec(s) { try { return decodeURIComponent(s); } catch { return 'URL 格式错误'; } }
 
 function getHashFunc(hashmethod) {
 	return async(s) => {
@@ -157,7 +152,9 @@ function encodeBase16(str) {
 }
 
 function decodeBase16(hex) {
-	if (hex.length % 2 !== 0) return "十六进制字符串无效";
+	if (hex.length % 2 !== 0) {
+		throw new Error("十六进制字符串无效");
+	}
 	const bytes = new Uint8Array(hex.length / 2);
 	for (let i = 0; i < hex.length; i += 2) {
 		bytes[i/2] = parseInt(hex.substring(i, i+2), 16);
@@ -166,12 +163,12 @@ function decodeBase16(hex) {
 }
 
 function encodeUnicode(str) {
-    const strsplit = [];
+    let strsplit = "";
     for (let i = 0; i < str.length; i++) {
         const char = str.charCodeAt(i);
-        strsplit.push('\\u' + char.toString(16).padStart(4, '0'));
+        strsplit += '\\u' + char.toString(16).padStart(4, '0');
     }
-    return strsplit.join('');
+    return strsplit;
 }
 
 function decodeUnicode(str) {
@@ -180,12 +177,12 @@ function decodeUnicode(str) {
           return String.fromCharCode(parseInt(hex, 16));
         });
     } catch (e) {
-        return "无效数据";
+        throw new Error("无效数据");
     }
 }
 
-let lvqichonglist = ["吕","齐","冲","其"]
-let lvqichongcodedict = {
+const youlist = ["又","双","叒","叕"]
+const youcodedict = {
 	"0": [0, 0],
 	"1": [0, 1],
 	"2": [0, 2],
@@ -204,32 +201,32 @@ let lvqichongcodedict = {
 	"f": [3, 3],
 }
 
-const lqcreverseDict = {};
-for (const [hexChar, [idx1, idx2]] of Object.entries(lvqichongcodedict)) {
-	const key = lvqichonglist[idx1] + lvqichonglist[idx2];
-	lqcreverseDict[key] = hexChar;
+const youreverseDict = {};
+for (const [hexChar, [idx1, idx2]] of Object.entries(youcodedict)) {
+	const key = youlist[idx1] + youlist[idx2];
+	youreverseDict[key] = hexChar;
 }
 
-function lvQiChongEncode(s) {
+function youEncode(s) {
 	let base16ed_text = encodeBase16(s);
 	let result = "";
 	base16ed_text.split('').forEach((c) => {
-		result += lvqichonglist[lvqichongcodedict[c][0]]+lvqichonglist[lvqichongcodedict[c][1]]
+		result += youlist[youcodedict[c][0]]+youlist[youcodedict[c][1]]
 	})
 	return result
 }
 
-function lvQiChongDecode(encodedStr) {
+function youDecode(encodedStr) {
 	if (encodedStr.length % 2 !== 0) {
-		return "解密失败：密文长度无效";
+		throw new Error("密文长度无效 (预期为偶数)");
 	}
 
 	let hexStr = "";
 	for (let i = 0; i < encodedStr.length; i += 2) {
 		const pair = encodedStr.substring(i, i + 2);
-		const hexChar = lqcreverseDict[pair];
+		const hexChar = youreverseDict[pair];
 		if (!hexChar) {
-			return "解密失败：包含无效密文字符";
+			throw new Error("包含无效密文字符");
 		}
 		hexStr += hexChar;
 	}
@@ -238,7 +235,7 @@ function lvQiChongDecode(encodedStr) {
 }
 
 function cardShuffle(s) {
-	if ( s === "" ) { return "" }
+	if (s === "") return "";
 	else {
 		let toggle = true;
 		let ars = "";
@@ -265,82 +262,96 @@ function cardUnshuffle(s) {
 	return result;
 }
 
+function card2dShuffle(s) {
+	if (s === "") return "";
+	const mid = Math.ceil(s.length / 2);
+	const ars = s.slice(0, mid);
+	const brs = s.slice(mid);
+	return cardShuffle(cardShuffle(ars) + cardShuffle(brs));
+}
+
+function card2dUnshuffle(s) {
+	if (s === "") return "";
+	nS = cardUnshuffle(s);
+	const mid = Math.ceil(s.length / 2);
+	const ars = nS.slice(0, mid);
+	const brs = nS.slice(mid);
+	return cardUnshuffle(ars) + cardUnshuffle(brs)
+}
+
 let bchoo = { //这名字乱起的哈哈
 	b64: {
 		en: utf8ToBase64,
-		de: base64ToUtf8,
-		is_hash: false
+		de: base64ToUtf8
 	},
 	b16: {
 		en: encodeBase16,
-		de: decodeBase16,
-		is_hash: false
+		de: decodeBase16
 	},
 	url: {
-		en: urlEnc,
-		de: urlDec,
-		is_hash: false
+		en: encodeURIComponent,
+		de: decodeURIComponent
 	},
 	dataurl: {
-		en: (g) => {return "data:text/plain;base64," + utf8ToBase64(g)},
-		de: decodeDataUrl,
-		is_hash: false
+		en: (g) => "data:text/plain;base64," + utf8ToBase64(g),
+		de: decodeDataUrl
 	},
 	unicode: {
 		en: encodeUnicode,
-		de: decodeUnicode,
-		is_hash: false
+		de: decodeUnicode
 	},
 	sha1: {
 		en: getHashFunc("SHA-1"),
-		de: (_) => "哈希无法被解密",
 		is_hash: true
 	},
 	sha256: {
 		en: getHashFunc("SHA-256"),
-		de: (_) => "哈希无法被解密",
+		is_hash: true
+	},
+	sha384: {
+		en: getHashFunc("SHA-384"),
 		is_hash: true
 	},
 	sha512: {
 		en: getHashFunc("SHA-512"),
-		de: (_) => "哈希无法被解密",
 		is_hash: true
 	},
 	off: {
 		en: offsetEncrypt,
 		de: offsetDecrypt,
-		is_hash: false
+		custom_text: "凯撒加密，但偏移的是ASCII码"
 	},
 	jge: {
 		en: jisgreen_encrypt,
 		de: jisgreen_decrypt,
-		is_hash: false,
 		custom_text: "JGE, JisGreen Encryption 是2025年11月的项目，现已停更。\n该加密效果不理想，密文长度甚至比明文长度高出52~137倍\n变体JisSkyline是66~171倍\n体验完整版 (老古董页面, 若页面已被删除请到本站的gh备份仓库里找): https://liaoxyucm{$rthSuffix}/JisGreenEncryption/"
 	},
 	jis2: {
 		en: jis2_encrypt,
 		de: jis2_decrypt,
-		is_hash: false,
 		custom_text: "此为纪青在开发KotlinBox时自创的加密算法，请支持他\n庆幸的是，我还有JIS2加密实现的留档"
 	},
-	lvqichong: {
-		en: lvQiChongEncode,
-		de: lvQiChongDecode,
-		is_hash: false,
-		custom_text: "吕齐冲是我们班的同学，而吕齐冲加解密是自创的Base16的变体"
+	you: {
+		en: youEncode,
+		de: youDecode
 	},
 	reverse: {
 		en: reverseStr,
-		de: reverseStr,
-		is_hash: false
+		de: reverseStr
 	},
 	cardshuffle: {
 		en: cardShuffle,
 		de: cardUnshuffle,
-		is_hash: false,
 		custom_text: "原文内容数量过小或字符种数过少，效果就不理想\n该加密适用于代码和文章"
+	},
+	card2dshuffle: {
+		en: card2dShuffle,
+		de: card2dUnshuffle,
+		custom_text: "洗牌算法的二维加强版"
 	}
 }
+
+////////////////////===================////////////////////
 
 function isAsyncFunction(fn) {
   return fn?.constructor?.name === 'AsyncFunction';
@@ -355,15 +366,21 @@ function method(mtd, thisElem) {
 	document.querySelector(".output").placeholder = bchoo[mtd].custom_text || (bchoo[mtd].is_hash ? "注意：此为哈希散列，无法被解密" : "结果将显示在这里" )
 }
 
+function safeShowtoast(content, type="success", duration=2000) {
+	if (showToast) {
+		showToast(content, type, duration)
+	}
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-	const encode = document.querySelector(".encode")
-	const decode = document.querySelector(".decode")
-	const copy_result = document.querySelector(".copy_rs")
-	const clearall = document.querySelector(".clear")
-	const switcher = document.querySelector(".switch")
-	const inputElem = document.querySelector(".input")
-	const output = document.querySelector(".output")
-	const methods = document.querySelectorAll(".method")
+	const encode = document.querySelector(".encode");
+	const decode = document.querySelector(".decode");
+	const copy_result = document.querySelector(".copy_rs");
+	const clearall = document.querySelector(".clear");
+	const switcher = document.querySelector(".switch");
+	const inputElem = document.querySelector(".input");
+	const output = document.querySelector(".output");
+	const methods = document.querySelectorAll(".method");
 
 	methods.forEach((mtd) => {
 		mtd.addEventListener("click", () => {
@@ -375,9 +392,9 @@ document.addEventListener("DOMContentLoaded", () => {
 		const input = inputElem.value
 		const cf = bchoo[setmethod].en
 		if (cf) {
-			let l = isAsyncFunction(cf) ? await cf(input) : cf(input)
-			output.value = l
+			output.value = isAsyncFunction(cf) ? await cf(input) : cf(input)
 		} else {
+			safeShowtoast("无效方式", "error");
 			output.value = "无效方式"
 		}
 	})
@@ -385,17 +402,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	decode.addEventListener("click", async () => {
 		const input = inputElem.value
-		const cf = bchoo[setmethod].de
+		const cf = bchoo[setmethod].is_hash ? () => {safeShowtoast("哈希散列的数据无法被解密", "error"); return ""} : bchoo[setmethod].de
 		if (cf) {
-			let l = isAsyncFunction(cf) ? await cf(input) : cf(input)
-			output.value = l
+			try {
+				output.value = isAsyncFunction(cf) ? await cf(input) : cf(input)
+			} catch (e) {
+				safeShowtoast(e, "error")
+			}
 		} else {
+			safeShowtoast("无效方式", "error");
 			output.value = "无效方式"
 		}		
 	})
 	
 	copy_result.addEventListener("click", async () => {
-		await navigator.clipboard.writeText(output.value);
+		try {
+			await navigator.clipboard.writeText(output.value);
+			safeShowtoast("已复制");
+		} catch(e) {
+			safeShowtoast("复制失败 - 请升级至新版浏览器", "error");
+		}
 	})
 
 	switcher.addEventListener("click", async () => {
