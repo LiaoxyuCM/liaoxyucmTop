@@ -2,7 +2,7 @@ function able2square(x/*: number */, y/*: number */) {
   return (x ** 2) < y
 }
 
-export default function alivefish_impl(text/*: string */) {
+function alivefish_impl(text/*: string */) {
   let result /*: string */ = "";
   let cell /*: number */ = 0;
 

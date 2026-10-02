@@ -214,7 +214,7 @@ svg {
 	gap: 1.8rem;
 	margin: 2.5rem 0 3rem 0;
 }
-.footer {
+footer {
 	margin-top: 3.5rem;
 	padding: 1.5rem 0.5rem;
 	text-align: center;
@@ -223,11 +223,11 @@ svg {
 	font-size: 1rem;
 	background: var(--body-bg-color);
 }
-.footer p {
+footer p {
 	opacity: 0.85;
 	transition: opacity 0.2s;
 }
-.footer p:hover {
+footer p:hover {
 	opacity: 1;
 }
 button {
@@ -506,7 +506,7 @@ table th {
 		padding: 1.2rem 0.8rem;
 		min-height: 90px;
 	}
-	.footer {
+	footer {
 		margin-top: 2rem;
 		padding: 1.2rem 0.5rem;
 	}

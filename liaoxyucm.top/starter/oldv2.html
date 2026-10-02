@@ -4,7 +4,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>Starter-v2 | Archive</title>
-		<link rel="stylesheet" href="https://assets.liaoxyucm.top/style_old2.css">
+		<link rel="stylesheet" href="https://assets.liaoxyucm.top/style.css">
 		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
 		<script src="https://assets.liaoxyucm.top/global.js"></script>
 	</head>
@@ -57,15 +57,15 @@
 				</div><br>
 				<div class="histories"></div>
 			</div>
-			<p verbose onclick="this.innerHTML = '我们将在你关闭标签页后清除网页内保存的历史数据<br><small>在本站的链接后面追加“?engine=引擎ID”（简洁模式将?换成&）可以设置默认搜索引擎</small>'">查看通知/技巧</p>
-			<section verbose class="links">
+			<p class="verbose" onclick="this.innerHTML = '我们将在你关闭标签页后清除网页内保存的历史数据<br><small>在本站的链接后面追加“?engine=引擎ID”（简洁模式将?换成&）可以设置默认搜索引擎</small>'">查看通知/技巧</p>
+			<section class="links verbose">
 				<a href="?simple=true" class="tosimple">简洁模式</a>
 				<a href="./oldengine.html">使用旧版起始页</a>
 				<a href="https://liaoxyucm.top">主站</a>
 			</section>
-			<section verbose class="footer">
+			<footer class="verbose">
 				<p>&copy; LiaoxyuCM 2024-2026</p>
-			</section>
+			</footer>
 		</main>
 		<script>
 			function getQueryParam(name){
@@ -74,7 +74,7 @@
 			};
 
 			if (getQueryParam("simple") === "true") {
-				document.querySelectorAll("[verbose]").forEach(element => {
+				document.querySelectorAll(".verbose").forEach(element => {
 					element.remove();
 				});
 			};

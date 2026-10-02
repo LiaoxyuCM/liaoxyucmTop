@@ -1,9 +1,29 @@
+<?php
+$buttons = [
+    ['text' => 'Base16',    'algo' => 'b16'],
+    ['text' => 'URL',       'algo' => 'url'],
+    ['text' => 'Data URL',  'algo' => 'dataurl'],
+    ['text' => 'Unicode',   'algo' => 'unicode'],
+    ['text' => 'SHA1',      'algo' => 'sha1'],
+    ['text' => 'SHA256',    'algo' => 'sha256'],
+    ['text' => 'SHA384',    'algo' => 'sha384'],
+    ['text' => 'SHA512',    'algo' => 'sha512'],
+    ['text' => 'JGE',       'algo' => 'jge'],
+    ['text' => 'JIS2',      'algo' => 'jis2'],
+    ['text' => '又双叒叕',  'algo' => 'you'],
+    ['text' => '偏移（+1）','algo' => 'off'],
+    ['text' => '反转',      'algo' => 'reverse'],
+    ['text' => '洗牌',      'algo' => 'cardshuffle'],
+    ['text' => '2维洗牌',   'algo' => 'card2dshuffle'],
+];
+?>
+
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" href="https://newsite.liaoxyucm.top/style.css">
+		<link rel="stylesheet" href="http://assets.liaoxyucm.top/v2.css">
 		<link rel="stylesheet" href="http://assets.liaoxyucm.top/toast/toast.css">
 		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
 		<script src="encode.js"></script>
@@ -15,7 +35,7 @@
 			<a href="https://liaoxyucm.top">LiaoxyuCM</a>
 			<div class="pc">
 				<a href="https://github.com/LiaoxyuCM" target="_blank">GitHub</a>
-				<a href="https://liaoxyucm.top/friendlylinks">友链</a>
+				<a href="https://liaoxyucm.top/friendlinks">友链</a>
 			</div>
 		</nav>
 		<main>
@@ -24,21 +44,11 @@
 			</noscript>
 			<div class="buttongroup">
 				<button class="method selected" data-algo="b64">Base64</button>
-				<button class="method" data-algo="b16">Base16</button>
-				<button class="method" data-algo="url">URL</button>
-				<button class="method" data-algo="dataurl">Data URL</button>
-				<button class="method" data-algo="unicode">Unicode</button>
-				<button class="method" data-algo="sha1">SHA1</button>
-				<button class="method" data-algo="sha256">SHA256</button>
-				<button class="method" data-algo="sha384">SHA384</button>
-				<button class="method" data-algo="sha512">SHA512</button>
-				<button class="method" data-algo="jge">JGE</button>
-				<button class="method" data-algo="jis2">JIS2</button>
-				<button class="method" data-algo="you">又双叒叕</button>
-				<button class="method" data-algo="off">偏移（+1）</button>
-				<button class="method" data-algo="reverse">反转</button>
-				<button class="method" data-algo="cardshuffle">洗牌</button>
-				<button class="method" data-algo="card2dshuffle">2维洗牌</button>
+				<?php
+					foreach ($buttons as $btn) {
+						echo '<button class="method" data-algo="'.$btn["algo"].'">'.$btn["text"]."</button>";
+					}
+				?>
 				<a href="rsa"><button>RSA（仅获取公私钥）</button></a>
 			</div>
 			<textarea placeholder="输入文本" class="input" name="input"></textarea>
@@ -52,8 +62,8 @@
 			<textarea placeholder="结果将显示在这里" class="output" name="output" readonly></textarea>
 			<a href="https://tools.liaoxyucm.top/explore_jge">探究 使用JGE编码文本 长度翻了几倍</a>
 		</main>
-        <section class="footer">
+        <footer>
             <p>&copy; LiaoxyuCM × FrontMeteor 2024-2026</p>
-        </section>
+        </footer>
 	</body>
 </html>
