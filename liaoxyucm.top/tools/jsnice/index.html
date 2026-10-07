@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="http://assets.liaoxyucm.top/v2.css">
+		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+		<link rel="stylesheet" href="http://assets.liaoxyucm.top/toast/toast.css">
+		<script src="http://assets.liaoxyucm.top/toast/toast.js"></script>
+		<script src="/jsnice/module.js"></script>
+		<title>JSNice | LiaoxyuCM</title>
+	</head>
+	<body>
+		<nav>
+			<a href="https://liaoxyucm.top">LiaoxyuCM</a>
+			<div class="pc">
+				<a href="https://github.com/LiaoxyuCM" target="_blank">GitHub</a>
+				<a href="https://liaoxyucm.top/friendlinks">友链</a>
+			</div>
+		</nav>
+		<main>
+			<noscript>
+				<h3>JSNice无法运作 因为你没打开JavaScript</h3>
+			</noscript>
+			<div style="position:sticky;top:50px" class="control">
+				<button class="go">反混淆</button>
+			</div>
+			<textarea placeholder="输入文本&#10;为保证反混淆成功, 请粘贴纯JsFxxk代码, 不能含有空格或换行等" id="input" style="word-break:break-all;line-break:anywhere"></textarea>
+			<textarea placeholder="结果将显示在这里&#10;JsNice是JsFxxk的反混淆器, 和市面上其他反混淆器不同, JsNice重点抓eval函数的传参&#10;由于该工具重度依赖JavaScript的特性, 暂不开放API接口&#10;有一点需要注意的是, 因反混淆过程调用了eval函数, 所以理论上可以在本站运行任何JavaScript代码; 但是这完全是一个运行在本地的程序, 作者概不负责" id="output" readonly></textarea>
+		</main>
+		<footer>
+			<p>&copy; LiaoxyuCM × FrontMeteor 2024-2026</p>
+		</footer>
+	</body>
+</html>

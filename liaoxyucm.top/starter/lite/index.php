@@ -44,26 +44,13 @@
 			</tr>
 		</thead>
 		<tbody>
-			<tr>
-				<td><a href="/lite/lite-l1.html">Lv1</a></td>
-				<td>"/"命令</td>
-			</tr>
-			<tr>
-				<td><a href="/lite/lite-l2.html">Lv2</a></td>
-				<td>Hitokoto</td>
-			</tr>
-			<tr>
-				<td><a href="/lite/lite-l3.html">Lv3</a></td>
-				<td>JQuery框架支持</td>
-			</tr>
-			<tr>
-				<td><a href="/lite/lite-l4.html">Lv4</a></td>
-				<td>当前时间</td>
-			</tr>
-			<tr>
-				<td><a href="/lite/lite-l5.html">Lv5</a></td>
-				<td>基本样式</td>
-			</tr>
+			<?php
+				$idx = 0;
+				foreach(['"/"命令', "Hitokoto", "JQuery框架支持", "当前时间", "基本样式"] as $content) {
+					$idx++;
+					echo '<tr><td><a href="/lite/lite-l'.$idx.'.html">Lv'.$idx.'</a></td><td>'.$content.'</td></tr>';
+				}
+			?>
 		</tbody>
 	</table>
 </body>

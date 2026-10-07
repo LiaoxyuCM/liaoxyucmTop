@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Macro Comment Processor Doc</title>
+  <link rel="stylesheet" href="mcpd.css" />
+  <link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico" />
+</head>
+<body>
+  <div class="container">
+    <!-- ============ 目录 ============ -->
+    <nav class="toc">
+      <h3>目录</h3>
+      <ol>
+        <li><a href="#intro">简介</a></li>
+        <li><a href="#syntax">语法说明</a>
+          <ul>
+            <li><a href="#comment">注释</a></li>
+            <li><a href="#macro-def">宏定义</a></li>
+            <li><a href="#macro-call">宏调用</a></li>
+          </ul>
+        </li>
+        <li><a href="#example">完整示例</a></li>
+        <li><a href="#rules">详细规则</a></li>
+        <li><a href="#impl">实现细节</a></li>
+        <li><a href="#limits">限制与注意事项</a></li>
+        <li><a href="#errors">错误处理</a></li>
+      </ol>
+    </nav>
+
+    <main>
+      <!-- ============ 1. 简介 ============ -->
+      <section id="intro">
+        <h2>1. 简介</h2>
+        <p>
+          这是一个 Brainfuck 预处理器，用于在 Brainfuck 代码中加入<strong>注释</strong>和<strong>宏</strong>。
+          预处理器读取源代码，删除注释、展开宏调用，然后输出处理后的 Brainfuck 代码。
+        </p>
+        <p>
+          核心处理函数签名为：
+        </p>
+        <pre><code><span class="keyword">export default function</span> <span class="type">macro_comment_process</span>(code: <span class="type">string</span>): [<span class="type">boolean</span>, <span class="type">string</span>]</code></pre>
+        <ul>
+          <li>返回值第一个元素表示<strong>语法是否正确</strong>（<code>true</code> / <code>false</code>）。</li>
+          <li>第二个元素是<strong>处理结果字符串</strong>（语法正确时有效，否则为空字符串）。</li>
+        </ul>
+      </section>
+
+      <!-- ============ 2. 语法说明 ============ -->
+      <section id="syntax">
+        <h2>2. 语法说明</h2>
+
+        <!-- 2.1 注释 -->
+        <h3 id="comment">2.1 注释</h3>
+        <p>使用 C 风格块注释：</p>
+        <pre><code>/* 注释内容 */</code></pre>
+        <p>注释内容会被删除，不会出现在输出中。</p>
+
+        <div class="callout warning">
+          <strong>注意</strong>
+          <p>不支持 <code>//</code> 行注释，也不支持嵌套注释。例如 <code>/* /* */ */</code> 会被解析为第一个 <code>/*</code> 到第一个 <code>*/</code> 结束，后面的 <code>*/</code> 会作为普通字符输出。</p>
+        </div>
+
+        <h4>示例</h4>
+        <div class="example-grid">
+          <div class="example-card">
+            <div class="card-header">输入</div>
+            <pre><code>[Hi.] /* 这是一个注释 ++--. */</code></pre>
+          </div>
+          <div class="example-card">
+            <div class="card-header">输出</div>
+            <pre><code>[Hi.]</code></pre>
+          </div>
+        </div>
+
+        <!-- 2.2 宏定义 -->
+        <h3 id="macro-def">2.2 宏定义</h3>
+        <p>语法：</p>
+        <pre><code>$宏名{宏体}</code></pre>
+        <ul>
+          <li><code>$</code> 必须<strong>紧贴</strong>宏名，中间不能有空白。</li>
+          <li>宏名可以是<strong>任意一个字符</strong>；从 <code>$</code> 之后到 <code>{</code> 之间的所有字符都视为宏名。</li>
+          <li><code>{</code> 和 <code>}</code> 包围宏体。</li>
+          <li>宏体中使用 <code>@</code> 表示调用时传入的参数占位符。</li>
+          <li>宏体<strong>不能包含 <code>}</code></strong>，否则会提前结束宏定义。</li>
+        </ul>
+
+        <h4>示例</h4>
+        <div class="example-grid">
+          <div class="example-card">
+            <div class="card-header">输入</div>
+            <pre><code>$square{&gt;@[&lt;@&gt;-]&lt;.}</code></pre>
+          </div>
+          <div class="example-card">
+            <div class="card-header">说明</div>
+            <pre><code>定义宏 square
+宏体为 &gt;@[&lt;@&gt;-]&lt;.
+@ 为参数占位符</code></pre>
+          </div>
+        </div>
+
+        <!-- 2.3 宏调用 -->
+        <h3 id="macro-call">2.3 宏调用</h3>
+        <p>语法：</p>
+        <pre><code>$宏名(参数)</code></pre>
+        <ul>
+          <li><code>$</code> 必须<strong>紧贴</strong>宏名。</li>
+          <li>参数写在 <code>(</code> 和 <code>)</code> 之间。</li>
+          <li>参数<strong>不能包含 <code>)</code></strong>，否则会提前结束参数列表。</li>
+          <li>调用时，宏体中的所有 <code>@</code> 都会被替换为参数。</li>
+          <li>支持<strong>零参数</strong>调用，即 <code>$foo()</code>，此时参数为空字符串。</li>
+          <li>不支持多参数宏；<code>,</code> 会被视为参数的一部分，而非分隔符。</li>
+        </ul>
+
+        <h4>示例</h4>
+        <div class="example-grid">
+          <div class="example-card">
+            <div class="card-header">输入</div>
+            <pre><code>$square(++++++)</code></pre>
+          </div>
+          <div class="example-card">
+            <div class="card-header">输出</div>
+            <pre><code>&gt;++++++[&lt;++++++&gt;-]&lt;.</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ 3. 完整示例 ============ -->
+      <section id="example">
+        <h2>3. 完整示例</h2>
+
+        <div class="example-grid">
+          <div class="example-card">
+            <div class="card-header">输入</div>
+            <pre><code>[Hi.] /* ++--. */
+$square{&gt;@[&lt;@&gt;-]&lt;.}
+$square(++++++)</code></pre>
+          </div>
+          <div class="example-card">
+            <div class="card-header">输出</div>
+            <pre><code>[Hi.]
+
+&gt;++++++[&lt;++++++&gt;-]&lt;.</code></pre>
+          </div>
+        </div>
+
+        <div class="callout success">
+          <strong>展开过程</strong>
+          <p>宏调用 <code>$square(++++++)</code> 中，宏体 <code>&gt;@[&lt;@&gt;-]&lt;.</code> 里的两个 <code>@</code> 都被替换为 <code>++++++</code>，得到 <code>&gt;++++++[&lt;++++++&gt;-]&lt;.</code>。</p>
+        </div>
+      </section>
+
+      <!-- ============ 4. 详细规则 ============ -->
+      <section id="rules">
+        <h2>4. 详细规则</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>项目</th>
+              <th>规则</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>宏名</td>
+              <td>从 <code>$</code> 之后到 <code>{</code>（定义）或 <code>(</code>（调用）之间的所有字符，可以是任意字符</td>
+            </tr>
+            <tr>
+              <td><code>$</code> 与宏名</td>
+              <td>必须紧贴，中间不能有空白或其他字符</td>
+            </tr>
+            <tr>
+              <td>宏体（定义）</td>
+              <td>不能包含 <code>}</code>，可以包含除 <code>}</code> 之外的任意字符</td>
+            </tr>
+            <tr>
+              <td>参数（调用）</td>
+              <td>不能包含 <code>)</code>，可以包含除 <code>)</code> 之外的任意字符</td>
+            </tr>
+            <tr>
+              <td>参数占位符</td>
+              <td><code>@</code>，宏体中的所有 <code>@</code> 都会被替换为同一参数</td>
+            </tr>
+            <tr>
+              <td>多参数</td>
+              <td>不支持，<code>,</code> 视为参数的一部分</td>
+            </tr>
+            <tr>
+              <td>零参数</td>
+              <td>支持，<code>$foo()</code> 参数为空字符串</td>
+            </tr>
+            <tr>
+              <td>宏内定义/调用宏</td>
+              <td>不支持，宏体内不能定义或调用另一个宏</td>
+            </tr>
+            <tr>
+              <td>注释</td>
+              <td><code>/* ... */</code>，不支持 <code>//</code>，不支持嵌套</td>
+            </tr>
+            <tr>
+              <td>未定义宏调用</td>
+              <td>展开为空字符串（不报错）</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- ============ 5. 实现细节 ============ -->
+      <section id="impl">
+        <h2>5. 实现细节</h2>
+        <p>可以<a href="https://github.com/LiaoxyuCM/brainfxxk_ex/blob/master/src/plugins/macro_comment_processor.ts">在 GitHub 上查看完整 TypeScript 实现</a></p>
+
+        <h3>5.1 处理流程</h3>
+        <ol>
+          <li><strong>遍历输入字符</strong>：使用 <code>pointer</code> 逐个扫描 <code>code</code>。</li>
+          <li><strong>遇到 <code>$</code></strong>：
+            <ul>
+              <li>持续读取字符直到遇到 <code>{</code> 或 <code>(</code>，这些字符构成宏名。</li>
+              <li>继续读取字符直到遇到 <code>}</code> 或 <code>)</code>，这些字符构成宏体或参数。</li>
+              <li>如果是 <code>}</code>，说明是宏定义，存入 <code>macros</code>。</li>
+              <li>如果是 <code>)</code>，说明是宏调用，取出宏体并替换 <code>@</code> 后追加到 <code>result</code>。</li>
+              <li>若宏名未定义，<code>macros.get()</code> 返回 <code>undefined</code>，通过 <code>|| ""</code> 展开为空字符串。</li>
+            </ul>
+          </li>
+          <li><strong>遇到 <code>/</code></strong>：如果下一个字符是 <code>*</code>，进入注释跳过逻辑；否则作为普通字符输出。</li>
+          <li><strong>其他字符</strong>：直接追加到 <code>result</code>。</li>
+          <li><strong>异常处理</strong>：任何越界或意外情况被 <code>catch</code> 捕获，返回 <code>[false, ""]</code>。</li>
+        </ol>
+      </section>
+
+      <!-- ============ 6. 限制与注意事项 ============ -->
+      <section id="limits">
+        <h2>6. 限制与注意事项</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>限制</th>
+              <th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>宏名任意字符</td>
+              <td>宏名可以包含空格、换行、<code>$</code>、<code>/</code> 等任意字符，只要它们出现在 <code>$</code> 和 <code>{</code> / <code>(</code> 之间</td>
+            </tr>
+            <tr>
+              <td>宏体不能含 <code>}</code></td>
+              <td>定义宏时，<code>}</code> 会立即结束宏体，无法在宏体内使用</td>
+            </tr>
+            <tr>
+              <td>参数不能含 <code>)</code></td>
+              <td>调用宏时，<code>)</code> 会立即结束参数，无法在参数内使用</td>
+            </tr>
+            <tr>
+              <td>宏内不能嵌套宏</td>
+              <td>宏体内不能定义或调用另一个宏，<code>$</code> 会被当作普通字符处理</td>
+            </tr>
+            <tr>
+              <td>无多参数</td>
+              <td>只支持单个参数，<code>,</code> 不具分隔语义</td>
+            </tr>
+            <tr>
+              <td>注释不支持嵌套</td>
+              <td><code>/* /* */ */</code> 会在第一个 <code>*/</code> 结束</td>
+            </tr>
+            <tr>
+              <td>不支持 <code>//</code></td>
+              <td>行注释不被识别，<code>/</code> 后跟非 <code>*</code> 时按普通字符输出</td>
+            </tr>
+            <tr>
+              <td>未定义宏静默展开</td>
+              <td>调用未定义的宏不会报错，而是展开为空字符串</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="callout warning">
+          <strong>边界行为提示</strong>
+          <p>
+            由于宏名和参数读取依赖 <code>{</code>、<code>(</code>、<code>}</code>、<code>)</code> 作为终止符，
+            如果输入中 <code>$</code> 后面没有出现这些字符，指针会持续前进直到越界，触发 <code>catch</code>，返回 <code>[false, ""]</code>。
+          </p>
+        </div>
+      </section>
+
+      <!-- ============ 7. 错误处理 ============ -->
+      <section id="errors">
+        <h2>7. 错误处理</h2>
+        <p>
+          函数通过 <code>try / catch</code> 捕获处理过程中的异常。当出现以下情况时，返回 <code>[false, ""]</code>：
+        </p>
+        <ul>
+          <li><code>$</code> 后未找到 <code>{</code> 或 <code>(</code>，导致指针越界。</li>
+          <li>读取宏体或参数时，未找到对应的 <code>}</code> 或 <code>)</code>，导致指针越界。</li>
+          <li>注释未闭合，且后续扫描越界。</li>
+        </ul>
+        <p>
+          语法正确时，返回 <code>[true, result]</code>，其中 <code>result</code> 是处理后的字符串。
+        </p>
+
+        <h3>7.1 未定义宏的行为</h3>
+        <p>
+          调用未定义的宏<strong>不会</strong>导致语法错误。实现中使用：
+        </p>
+        <pre><code>(macros.get(storaged_name) || <span class="string">""</span>).replaceAll(<span class="string">"@"</span>, storaged_body)</code></pre>
+        <p>
+          因此未定义宏会被展开为空字符串，函数仍返回 <code>[true, result]</code>。
+        </p>
+      </section>
+      <footer class="footer">
+        <p>&copy; LiaoxyuCM × FrontMeteor 2024-2026<br>文档生成: DeepSeek, 稍作修改: LiaoxyuCM/Lclimir</p>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<link rel="stylesheet" href="http://assets.liaoxyucm.top/v2.css">
+		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
+		<title>Unwasting API Interface Document</title>
+	</head>
+	<body>
+		<nav>
+			<a href="https://liaoxyucm.top">LiaoxyuCM</a>
+			<div class="pc">
+				<a href="https://github.com/LiaoxyuCM" target="_blank">GitHub</a>
+				<a href="https://liaoxyucm.top/friendlinks">友链</a>
+			</div>
+		</nav>
+		<main>
+			<h2>基本信息</h2>
+			<table>
+				<thead>
+					<tr>
+						<th>键</th>
+						<th>值</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>接口地址1</td>
+						<td><a href="https://api.liaoxyucm.top/lang/unwaste.php" target="_blank">https://api.liaoxyucm.top/lang/unwaste.php</a></td>
+					</tr>
+					<tr>
+						<td>接口地址2</td>
+						<td><a href="https://lang.llcm.top/unwaste.php" target="_blank">https://lang.llcm.top/unwaste.php</a></td>
+					</tr>
+					<tr>
+						<td>主机提供商</td>
+						<td><a href="https://m.luoli.love/" target="_blank">MNBT</a></td>
+					</tr>
+					<tr>
+						<td>请求方式</td>
+						<td>GET</td>
+					</tr>
+					<tr>
+						<td>返回格式</td>
+						<td>text/plain</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<h2>参数</h2>
+			<p>注: 所有参数都不是必传的, 默认值是空字符串</p>
+			<table>
+				<thead>
+					<tr>
+						<th>名称</th>
+						<th>说明</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>src</td>
+						<td>原文本内容</td>
+					</tr>
+					<tr>
+						<td>unique_result</td>
+						<td>若值为 <code>true</code> , 启用自动初始化</td>
+					</tr>
+				</tbody>
+			</table>
+
+			<h2>返回</h2>
+			<p>Unwasting编译结果</p>
+
+			<h2>请求示例</h2>
+			<a href="https://lang.llcm.top/unwaste.php?src=Hello&unique_result=true" target="_blank">?src=<b>Hello</b>&amp;unique_result=<b>true</b></a>
+			<p>预期返回 <code>0#[[[[[++]]+]]].[[[+++]+]]+.+++++++..+++.</code></p>
+		</main>
+		<footer>
+			<p>&copy; LiaoxyuCM × FrontMeteor 2024-2026</p>
+		</footer>
+	</body>
+</html>

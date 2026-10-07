@@ -1,20 +1,20 @@
 <?php
 $buttons = [
-    ['text' => 'Base16',    'algo' => 'b16'],
-    ['text' => 'URL',       'algo' => 'url'],
-    ['text' => 'Data URL',  'algo' => 'dataurl'],
-    ['text' => 'Unicode',   'algo' => 'unicode'],
-    ['text' => 'SHA1',      'algo' => 'sha1'],
-    ['text' => 'SHA256',    'algo' => 'sha256'],
-    ['text' => 'SHA384',    'algo' => 'sha384'],
-    ['text' => 'SHA512',    'algo' => 'sha512'],
-    ['text' => 'JGE',       'algo' => 'jge'],
-    ['text' => 'JIS2',      'algo' => 'jis2'],
-    ['text' => '又双叒叕',  'algo' => 'you'],
-    ['text' => '偏移（+1）','algo' => 'off'],
-    ['text' => '反转',      'algo' => 'reverse'],
-    ['text' => '洗牌',      'algo' => 'cardshuffle'],
-    ['text' => '2维洗牌',   'algo' => 'card2dshuffle'],
+    ['Base16',    'b16'],
+    ['URL',       'url'],
+    ['Data URL',  'dataurl'],
+    ['Unicode',   'unicode'],
+    ['SHA1',      'sha1'],
+    ['SHA256',    'sha256'],
+    ['SHA384',    'sha384'],
+    ['SHA512',    'sha512'],
+    ['JGE',       'jge'],
+    ['JIS2',      'jis2'],
+    ['又双叒叕',  'you'],
+    ['偏移 (+1)', 'off'],
+    ['反转',      'reverse'],
+    ['洗牌',      'cardshuffle'],
+    ['2维洗牌',   'card2dshuffle'],
 ];
 ?>
 
@@ -25,9 +25,10 @@ $buttons = [
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="http://assets.liaoxyucm.top/v2.css">
 		<link rel="stylesheet" href="http://assets.liaoxyucm.top/toast/toast.css">
+		<script src="http://assets.liaoxyucm.top/toast/toast.js"></script>
+		<link rel="stylesheet" href="/index.css">
 		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
 		<script src="encode.js"></script>
-		<script src="http://assets.liaoxyucm.top/toast/toast.js"></script>
 		<title>Encoder | LiaoxyuCM</title>
 	</head>
 	<body>
@@ -39,20 +40,17 @@ $buttons = [
 			</div>
 		</nav>
 		<main>
-			<noscript>
-				<h3>本编码器几乎无法运作 因为你没打开JavaScript</h3>
-			</noscript>
-			<div class="buttongroup">
+			<div class="buttongroup btngroup-0">
 				<button class="method selected" data-algo="b64">Base64</button>
 				<?php
 					foreach ($buttons as $btn) {
-						echo '<button class="method" data-algo="'.$btn["algo"].'">'.$btn["text"]."</button>";
+						echo '<button class="method" data-algo="'.$btn[1].'">'.$btn[0]."</button>";
 					}
 				?>
-				<a href="rsa"><button>RSA（仅获取公私钥）</button></a>
+				<a href="rsa"><button>RSA</button></a>
 			</div>
 			<textarea placeholder="输入文本" class="input" name="input"></textarea>
-			<div class="buttongroup">
+			<div class="buttongroup btngroup-1">
 				<button class="encode">编码</button>
 				<button class="decode">解码</button>
 				<button class="clear">清空</button>

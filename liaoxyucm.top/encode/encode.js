@@ -433,4 +433,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		inputElem.value = "";
 		output.value = "";
 	})
+
+	safeShowtoast("所有组件加载成功");
 });

@@ -21,21 +21,24 @@
 			<noscript>
 				<h3>Unwasting无法运作 因为你没打开JavaScript</h3>
 			</noscript>
-			<textarea placeholder="输入文本" id="input"></textarea>
-			<label for="uniquers">
-				<p>
-					<input type="checkbox" id="uniquers" checked />
-					自动初始化
-				</p>
-			</label>
-			<div style="display: flex">
-				<div class="buttongroup" style="flex: 1">
-					<button class="go">编译成wastelang</button>
-					<button class="copyrs">复制结果</button>
+			<div style="position:sticky;top:50px" class="control">
+				<div style="display:flex">
+					<div class="buttongroup" style="flex: 1">
+						<button class="go">编译成wastelang</button>
+						<button class="copyrs">复制结果</button>
+					</div>
+					<p>结果=<span class="restat_len">0</span>ch, 原文本/结果&approxeq;<span class="restat_dv">undef</span></p>
 				</div>
-				<p>结果=<span class="restat_len">0</span>ch, 原文本/结果&approxeq;<span class="restat_dv">undef</span></p>
+				<label for="uniquers">
+					<p>
+						<input type="checkbox" id="uniquers" checked />
+						自动初始化
+					</p>
+				</label>
 			</div>
+			<textarea placeholder="输入文本" id="input"></textarea>
 			<textarea placeholder="结果将显示在这里&#10;新版Unwasting编译结果的长度 比 初版的 压缩了大约10%&#10;但由于代码稳定性, 编译器舍去了众多WasteLang的功能, 从而编译后的文本不是最短的 (虽然我们已做到尽可能短)" id="output" style="word-break:break-all;line-break:anywhere" readonly></textarea>
+			<a href="api_doc.html" target="_blank">API接口文档</a>
 		</main>
 		<footer>
 			<p>&copy; LiaoxyuCM × FrontMeteor 2024-2026</p>
@@ -51,6 +54,17 @@
 			$(".copyrs").on("click", async () => {
 				await navigator.clipboard.writeText(output.val());
 			})
+
+			function handleScroll() {
+				const scrolled = window.scrollY > 20;
+				$(".control").css({
+					backdropFilter: scrolled ? "blur(5px)" : "none",
+					backgroundColor: scrolled ? "#00000020" : "transparent"
+				});
+			}
+
+			window.addEventListener("scroll", handleScroll, { passive: true });
+			handleScroll();
 		</script>
 	</body>
 </html>

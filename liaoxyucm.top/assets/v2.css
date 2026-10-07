@@ -1,4 +1,4 @@
-@import url('https://fonts.loli.net/css?family=Poppins&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Poppins&display=swap');
 
 * {
 	margin: 0;
@@ -44,7 +44,7 @@
 		--body-text-color: #e2e8f0;
 		--body-link-border: #334155;
 		--body-link-shadow-color: rgba(0, 0, 0, 0.5);
-		--body-link-hover-shadow-color: #111a2980;
+		--body-link-hover-shadow-color: #3b82f6a0;
 		--body-link-bg-color: rgba(30, 41, 59, 0.8);
 		--nav-bg-color: #111a2930;
 		--nav-border-color: #334155;

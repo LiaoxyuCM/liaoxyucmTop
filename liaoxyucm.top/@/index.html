@@ -32,8 +32,19 @@
 		</div> -->
 		<!-- <div class="mainpare"> -->
 			<main>
+				<div class="hint warn xyz-depwarn" style="display:none">
+					<p>检测到您正在通过 liaoxyucm.<strong>xyz</strong>&nbsp;跳转访问本站，请直接访问 liaoxyucm.<strong>TOP</strong>&nbsp;旧站将在2027/1/4起不再跳转到新站</p>
+				</div>
+				<p>/</p>
+				<ul>
+					<li><a href="https://tools.liaoxyucm.top">文本处理/</a></li>
+					<li><a href="/games">游戏/</a></li>
+					<li><a href="/demo">早期作品/</a></li>
+					<li><a href="https://about.liaoxyucm.top" target="_blank">关于我</a></li>
+					<li><a href="/llcmintro" target="_blank">llcm.top (lcmtop_reacted)</a></li>
+					<li><a href="https://st.llcm.top" target="_blank">起始页</a></li>
+				</ul>
 				<p>
-					推荐访问<a href="/llcmintro" target="_blank">llcm.top</a><br>
 					如果你发现本网站跟你自己网站的设计相似或者雷同，纯属巧合<br>
 					本站不会主动收集你的个人信息<br>
 					若你在使用本站服务期间对任意一方造成损害, 作者概不负责<br>
@@ -58,13 +69,7 @@
 
 			const redirectFromValue = getQueryParam('redirectFrom');
 			if (redirectFromValue == 'liaoxyucm.xyz') {
-			    const mainElement = document.querySelector('main');
-			    if (mainElement) {
-			        const warnDiv = document.createElement('div');
-			        warnDiv.className = 'hint warn';
-			        warnDiv.innerHTML = `检测到您正在通过 liaoxyucm.<strong>xyz</strong>&nbsp;跳转访问本站，请直接访问 liaoxyucm.<strong>TOP</strong>&nbsp;旧站将在2027/1/4起不再跳转到新站`;
-			        document.querySelector("main").insertBefore(warnDiv, document.querySelector("main").firstChild);
-			    }
+			    document.querySelector(".xyz-depwarn").style.display = "flex";
 			}
 
 			// window.addEventListener('scroll', function() {
@@ -82,7 +87,7 @@
 				const sec = Math.floor(ms%60000/1000);
 				return `${day}天 ${hour}时 ${min}分 ${sec}秒`;
 			}
-			function update(){timer.textContent = '本站已经安全地活过 ' + fmtDuration(Date.now() - startTime);}
+			function update(){timer.textContent = '本站已活过 ' + fmtDuration(Date.now() - startTime);}
 			setInterval(update, 100);
 		</script>
 	</body>

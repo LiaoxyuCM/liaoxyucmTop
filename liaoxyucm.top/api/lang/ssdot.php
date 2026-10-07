@@ -1,13 +1,14 @@
 <?php
-
 header('Content-Type: text/plain');
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET');
 
 $userInput = $_GET['src'] ?? '';
 $stored = '';
 $result = '';
 $status = 0;
-foreach (str_split($userInput) as $chr) {
+
+foreach (mb_str_split($userInput) as $chr) {
   if ($status == 1) {
     $stored .= $chr;
     $status = 0;
@@ -20,26 +21,27 @@ foreach (str_split($userInput) as $chr) {
         $stored = '';
       }
       break;
-      case '\\':
-        if ($status == 0) {
-          $status = 1;
-        }
-        break;
 
-      case '/':
-        if ($status == 0) {
-          $status = 2;
-        } else if ($status == 2) {
-          $status = 0;
-        }
-        break;
+    case '\\':
+      if ($status == 0) {
+        $status = 1;
+      }
+      break;
 
-      default:
-        if ($status == 0) {
-          $stored .= $chr;
-        }
-        break;
+    case '/':
+      if ($status == 0) {
+        $status = 2;
+      } else if ($status == 2) {
+        $status = 0;
+      }
+      break;
+
+    default:
+      if ($status == 0) {
+        $stored .= $chr;
+      }
+      break;
   }
 }
-echo $result ?: "No output\nMay missing argument 'src' (require GET)";
+echo $result;
 exit;

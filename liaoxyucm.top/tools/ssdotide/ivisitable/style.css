@@ -1,0 +1,81 @@
+html, body {
+	margin: 0;
+	padding: 0;
+}
+body {
+	background-color: #eee
+}
+.pare {
+	display: flex;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+.section_1 {
+	position: relative;
+	width: 70%;
+	height: 100%;
+	display: block;
+}
+.section_1>div {
+	overflow-y: auto;
+}
+.section_2 {
+	position: fixed;
+	background-color: #bbb;
+	left: 70%;
+	width: 30%;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+[bordered] {
+	border: 1px solid #111;
+	border-radius: 5px;
+	margin: 6px;
+	word-wrap: break-word;
+}
+p {
+	margin: 8px;
+}
+button {
+	border: 1px solid #000;
+	border-radius: 3px;
+	margin-left: 5px;
+	transition: .2s all ease-in-out;
+}
+button[outline] {
+	margin: 5px;
+	padding: 4px;
+}
+button:hover {
+	background-color: #ccc;
+	cursor: pointer;
+}
+@media(max-width: 768px) {
+	.pare { flex-direction: column}
+	.section_1 {
+		width: 100%;
+		height: 70%;
+		display: flex;
+		flex-direction: column;
+	}
+	.section_2 {
+		background-color: #bbb;
+		top: 70%;
+		left: 0;
+		width: 100%;
+		height: 30%;
+		display: flex;
+		flex-direction: column;
+	}
+}
+@media(prefers-color-scheme: dark) {
+	* { color: #fff }
+	body { background-color: #111; }
+	.section_2 { background-color: #444; }
+	p { color: #fff; }
+	button { border: 1px solid #fff; background-color: #000 }
+	button:hover { background-color: #333; }
+	[bordered] { border: 1px solid #eee; }
+}

@@ -4,6 +4,9 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="stylesheet" href="http://assets.liaoxyucm.top/v2.css">
+		<link rel="stylesheet" href="http://assets.liaoxyucm.top/toast/toast.css">
+		<link rel="stylesheet" href="/index.css">
+		<script src="http://assets.liaoxyucm.top/toast/toast.js"></script>
 		<link rel="shortcut icon" href="https://assets.liaoxyucm.top/favicon.ico">
 		<title>RSA Encode</title>
 	</head>
@@ -16,80 +19,21 @@
 			</div>
 		</nav>
 		<main>
-			<div class="buttongroup">
-				<button class="revbtn">生成</button>
-				<button onclick="copyrs(this)">复制结果</button>
+			<div class="buttongroup btngroup-0">
+				<button class="revbtn">生成密钥</button>
+				<button class="encbtn">加密</button>
+				<button class="decbtn">解密</button>
+				<button class="copybtn">复制结果</button>
 				<a href="/"><button>其他加密</button></a>
 			</div>
-			<textarea placeholder="公钥" class="public"></textarea>
-			<textarea placeholder="私钥" class="private"></textarea>
+			<div style="display:flex;flex-direction:row;padding:5px 0px;">
+				<textarea placeholder="公钥" class="public"></textarea>
+				<textarea placeholder="私钥" class="private"></textarea>
+			</div>
+			<textarea placeholder="输入文本" class="input"></textarea>
+			<textarea placeholder="结果将显示在这里" readonly class="output"></textarea>
 		</main>
-		<script>
-			const pub = document.querySelector(".public");
-			const priv = document.querySelector(".private");
-			const btn = document.querySelector(".revbtn");
-
-
-			async function generateRSAKeyPair() {
-			const keyPair = await window.crypto.subtle.generateKey(
-				{
-				name: "RSASSA-PKCS1-v1_5",
-				modulusLength: 2048,
-				publicExponent: new Uint8Array([0x01, 0x00, 0x01]),
-				hash: "SHA-256",
-				},
-				true,
-				["sign", "verify"]
-			);
-
-			const privateKeyBuffer = await window.crypto.subtle.exportKey(
-				"pkcs8",
-				keyPair.privateKey
-			);
-			const privateKeyPem = bufferToPem(privateKeyBuffer, "PRIVATE KEY");
-
-			const publicKeyBuffer = await window.crypto.subtle.exportKey(
-				"spki",
-				keyPair.publicKey
-			);
-			const publicKeyPem = bufferToPem(publicKeyBuffer, "PUBLIC KEY");
-
-			return {
-				privateKey: privateKeyPem,
-				publicKey: publicKeyPem,
-			};
-			}
-
-			function bufferToPem(buffer, label) {
-				const uint8Array = new Uint8Array(buffer);
-				let binary = "";
-				uint8Array.forEach((byte) => {
-					binary += String.fromCharCode(byte);
-				});
-				const base64 = window.btoa(binary);
-				const lines = base64.match(/.{1,64}/g);
-				return `-----BEGIN ${label}-----\n${lines.join("\n")}\n-----END ${label}-----`;
-			}
-			
-			async function reveal() {
-				btn.textContent = "请稍等";
-				btn.disabled = true;
-
-				let result = await generateRSAKeyPair();
-				btn.textContent = "生成";
-				btn.disabled = false;
-				pub.textContent = result.publicKey;
-				priv.textContent = result.privateKey;
-
-			}
-
-			btn.addEventListener("click", reveal);
-			async function copyrs(element) {
-				element.textContent = "请稍等";
-				await navigator.clipboard.writeText(pub.value + '\n' + priv.value);
-				element.textContent = "复制结果";
-			};
-		</script>
+		<script src="/rsa/rsa.js"></script>
         <footer>
             <p>&copy; LiaoxyuCM × FrontMeteor 2024-2026</p>
         </footer>
